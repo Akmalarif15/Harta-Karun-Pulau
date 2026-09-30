@@ -557,3 +557,18 @@ h1{font:900 clamp(19px,3vw,30px) Georgia,serif;color:#fff1b7;margin:0;line-heigh
   .intro-dock-avatar{width:42px;height:42px;font-size:20px}
   .intro-dock-text{font-size:14px}
 }
+
+
+.music-btn{
+  position:relative;
+}
+.music-btn[aria-pressed="true"]::after{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#b8ff9f;
+  display:inline-block;
+  margin-left:7px;
+  box-shadow:0 0 0 3px #b8ff9f22;
+}

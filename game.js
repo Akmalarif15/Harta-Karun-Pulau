@@ -105,7 +105,7 @@ function ensureAudio() {
   if (!AudioCtor) return false;
   audioCtx = new AudioCtor();
   musicMaster = audioCtx.createGain();
-  musicMaster.gain.value = 0.055;
+  musicMaster.gain.value = 0.34;
   musicMaster.connect(audioCtx.destination);
   return true;
 }
@@ -133,10 +133,10 @@ function schedulePiratePhrase() {
   for (let i = 0; i < 12; i++) {
     const idx = (musicStep + i) % PIRATE_MELODY.length;
     const when = now + i * beat;
-    playTone(PIRATE_MELODY[idx], when, beat * 0.72, i % 3 === 0 ? 'square' : 'triangle', i % 3 === 0 ? 0.035 : 0.055);
+    playTone(PIRATE_MELODY[idx], when, beat * 0.78, i % 3 === 0 ? 'square' : 'triangle', i % 3 === 0 ? 0.09 : 0.12);
     if (i % 3 === 0) {
       const bassIdx = Math.floor((musicStep + i) / 3) % PIRATE_BASS.length;
-      playTone(PIRATE_BASS[bassIdx], when, beat * 2.2, 'sine', 0.065);
+      playTone(PIRATE_BASS[bassIdx], when, beat * 2.2, 'sine', 0.13);
     }
   }
   musicStep = (musicStep + 12) % PIRATE_MELODY.length;
@@ -151,11 +151,14 @@ async function startMusic() {
     try { await audioCtx.resume(); } catch (e) {}
   }
   musicEnabled = true;
-  if (musicMaster) musicMaster.gain.setTargetAtTime(0.055, audioCtx.currentTime, 0.04);
+  if (musicMaster) musicMaster.gain.setTargetAtTime(0.34, audioCtx.currentTime, 0.04);
   clearInterval(musicTimer);
+  playTone(587.33, audioCtx.currentTime + 0.03, 0.14, 'triangle', 0.10);
+  playTone(739.99, audioCtx.currentTime + 0.18, 0.16, 'triangle', 0.10);
   schedulePiratePhrase();
   musicTimer = setInterval(schedulePiratePhrase, 2880);
   updateMusicButton();
+  toast('🎵 Muzik latar lanun dihidupkan.');
 }
 
 function stopMusic() {
@@ -166,6 +169,7 @@ function stopMusic() {
     musicMaster.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.05);
   }
   updateMusicButton();
+  toast('🔇 Muzik latar dimatikan.');
 }
 
 function updateMusicButton() {
