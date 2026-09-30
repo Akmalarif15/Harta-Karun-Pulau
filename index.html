@@ -45,6 +45,63 @@
 .dyslexiaNote{background:#e9f0e5;border:1px solid #a7bd9f;border-radius:10px;padding:10px 12px;color:#365244;font-size:12px;line-height:1.55;margin:10px 0}
 @media(max-width:700px){.wordCard{flex:1 1 45%;text-align:center;padding:13px 9px;font-size:18px}.sentenceBuild,.wordBank{gap:8px;padding:10px}.builderPanel{padding:12px}.situationCard{grid-template-columns:1fr}.situationText{text-align:left}.situationSteps span{font-size:11px}.situationVisual img{max-height:none}.primary,.secondary,.danger{width:100%}.smallbtn{min-height:44px}}
 
+
+/* ===== Tema Tropika Ceria — Misi Pena Lanun ===== */
+:root{
+  --navy:#103B4A;
+  --deep:#062C3A;
+  --gold:#FFC857;
+  --cream:#FFF8E7;
+  --ink:#24383A;
+  --paper:#FFF3D6;
+  --mist:#BFE8E3;
+  --accent:#20B8CD;
+  --red:#B94D46;
+}
+html,body{background:#06394B}
+body{background:radial-gradient(ellipse at 50% 0,#2F8F9A,#0A3342 78%)}
+.tag{color:#B8F0E7}
+.logo strong{color:#FFF0B8}
+.sigil{background:linear-gradient(140deg,#A8753A,#4D2E1B);border-color:#FFD37C;box-shadow:inset 0 2px 12px #FFD37C55,0 5px 18px #0007}
+.smallbtn{background:linear-gradient(180deg,#197784,#0F4D5B);border-color:#70D3CB;color:#FFF8E7}
+.smallbtn[aria-pressed=true]{background:#FFD36B;color:#26393A}
+.chip{border-color:#63C9BF;background:linear-gradient(125deg,#197783,#0D4A58);box-shadow:inset 0 1px 0 #FFFFFF18}
+.chip small{color:#C7EEE8}
+.progress{background:#07313E}
+.progress>i{background:linear-gradient(90deg,#35D1B3,#FFD35E)}
+.gameframe{border-color:#D5A34E;box-shadow:0 24px 70px #00131FA8,inset 0 0 34px #00151F66;background:#2E8791}
+#vignette{background:radial-gradient(ellipse at 50% 45%,transparent 46%,#062F3C78 100%)}
+.overlay{background:#052C36B8}
+.overlay.light{background:#073F4D66}
+.panel{background:linear-gradient(155deg,#FFFDF4,#F4D995);color:#263A38;border-color:#C58A35;box-shadow:0 20px 70px #00131FA8,inset 0 0 0 5px #FFF9E8,inset 0 0 30px #D6A64D25}
+.panel h1,.panel h2{color:#20433E}
+.overline{color:#9A6423}
+.dialogue{background:#FFF0C6;border-left-color:#E09B2E}
+.primary{background:linear-gradient(#FFD96B,#F3A626);color:#2F3A30;border-color:#9B651F;box-shadow:0 4px 0 #8D5B1E}
+.secondary{background:linear-gradient(#258B92,#17636E);color:#FFFBEF;border-color:#65C8C5;box-shadow:0 4px 0 #0D414A}
+.pill{background:#F4E0A5;border-color:#C18B3D;color:#3D4A37}
+.dot{background:#C9B47D;border-color:#B79B61}
+.dot.past{background:#2A9189;border-color:#176B68}
+.dot.current{background:#FFD35E;color:#44331E}
+.missionBox{border-color:#D3A55A;background:#FFFDF7}
+.writingWrap{background:linear-gradient(180deg,#FFFBEF,#F6E2AF);border-color:#D9B467}
+.tool{background:#FFF0C7;border-color:#B79A62}
+.tool[aria-pressed=true]{background:#208B82}
+.enterHint{background:#0B5260E8;border-color:#FFD173;color:#FFF9DF}
+.toast{border-color:#FFD173;background:#126B6AEF;color:#FFF9E6}
+.dpad button,.interact{border-color:#70D1C6;background:linear-gradient(#2D8D96,#175866);color:#FFF4CD}
+.ribbon{background:#0F5964DD;border-color:#D7A853;color:#FFF0C8}
+.lessonCard{background:linear-gradient(125deg,#FFF0C8,#FFFDF5);border-color:#D3A254}
+.builderPanel{border-color:#D39A47;background:linear-gradient(135deg,#FFFDF7,#F3D99A)}
+.builderInstruction{background:#E9F7E8;border-left-color:#4FAE73}
+.wordBank{background:#F3DDA4;border-color:#B8873F}
+.sentenceBuild{background:#FFFDF8;border-color:#63A99D}
+.wordCard{border-color:#588E7C;background:#FFF9E9;box-shadow:0 4px 0 #C59A55}
+.builtCard{background:#DDF4E6;border-color:#4E9D73}
+.situationCard{background:linear-gradient(180deg,#FFF2D4,#F3DDAA);border-color:#D3A85F}
+.visualTag{background:#168C8A}
+.dyslexiaHelper{background:#E8F7ED;border-color:#91C59B}
+
 </style>
 </head>
 <body><main id="app">
@@ -151,12 +208,12 @@ function cave(x,y,open){cx.save();cx.translate(x,y);ellipse(0,95,257,52,'#0a3432
 function chest(x,y,open,big=false){cx.save();cx.translate(x,y);let sc=big?1.5:1;cx.scale(sc,sc);ellipse(0,62,90,24,'#0b1b1c8c');if(open){glow(0,0,157,'#efcf6891');for(let i=0;i<28;i++){let xx=Math.sin(i*3.9)*62,yy=12+Math.cos(i*2.1)*25;ellipse(xx,yy,7,5,i%2?'#fff3ad':'#e5b343')}path([[-77,10],[-66,-52],[60,-52],[80,11]],'#6b3c22','#f3c36c',4)}path([[-79,-4],[80,-4],[72,57],[-71,57]],lin(0,-4,0,60,[[0,'#99613a'],[1,'#492c21']]),'#e5b76b',5);for(let x of [-51,0,51]){cx.fillStyle='#d4a445';cx.fillRect(x-5,0,10,55)}cx.fillStyle='#f3cc77';cx.fillRect(-16,12,33,24);cx.fillStyle='#725024';cx.fillRect(-6,23,12,11);cx.restore()}
 function npc(x,y,emoji,name,stage){let pulse=state.calm?0:Math.sin(state.t*2)*7;glow(x,y-35,82+pulse,state.done?'#ffe59c85':'#80ffe396');ellipse(x,y+16,37,13,'#082826a0');cx.save();cx.translate(x,y-57+(state.calm?0:Math.sin(state.t*2.4)*2));cx.fillStyle=lin(0,-20,0,85,[[0,'#284b4a'],[1,'#172e37']]);path([[-18,12],[23,11],[31,71],[-22,71]],cx.fillStyle,'#d6ba7b',2);ellipse(0,-13,31,34,'#cca078');path([[-31,-14],[-26,-35],[0,-48],[27,-36],[31,-15]],'#49382d');path([[-38,-42],[38,-42],[44,-34],[-45,-34]],'#3b2c29','#b58b57',3);path([[-30,-41],[-20,-62],[12,-64],[33,-41]],'#402d29','#cba875',2);cx.fillStyle='#352b25';ellipse(-10,-12,2.7,3,'#352b25');ellipse(10,-12,2.7,3,'#352b25');cx.strokeStyle='#5d4430';cx.lineWidth=2;cx.beginPath();cx.arc(0,-1,9,.2,Math.PI-.2);cx.stroke();cx.fillStyle='#fff4ce';cx.font='bold 28px sans-serif';cx.textAlign='center';cx.fillText(emoji,0,-74);cx.restore();cx.save();cx.font='bold 17px Verdana';let wid=cx.measureText(name).width+30;cx.fillStyle='#0b303acb';cx.strokeStyle='#ebcb87';cx.lineWidth=1.6;cx.beginPath();cx.roundRect(x-wid/2,y-167,wid,31,12);cx.fill();cx.stroke();cx.fillStyle='#fff0c1';cx.textAlign='center';cx.fillText(name,x,y-145);cx.restore()}
 function hero(x,y){const t=state.calm?0:state.t;cx.save();cx.translate(x,y);ellipse(0,15,31,11,'#0827267d');cx.translate(0,Math.sin(t*9)*(state.keys.size?2:.8));cx.fillStyle='#263c43';path([[-13,-8],[0,0],[21,-8],[19,-37],[-15,-37]],'#23464c','#9b7950',2);cx.fillStyle='#b59b79';cx.fillRect(-15,-30,8,31);cx.fillRect(7,-30,8,31);path([[-26,-67],[22,-67],[28,-32],[-23,-32]],'#7b3c37','#f2b977',2);path([[-26,-65],[22,-65],[18,-51],[-24,-51]],'#efe1bd');ellipse(0,-86,21,24,'#d4a576');path([[-28,-103],[27,-103],[40,-93],[-41,-93]],'#302a2a','#e6be80',2);path([[-21,-103],[-13,-127],[16,-129],[24,-103]],'#342b2a','#9e7650',2);cx.fillStyle='#f1ce82';cx.fillRect(-15,-104,30,3);ellipse(-7,-85,2,2,'#392a28');ellipse(8,-85,2,2,'#392a28');cx.strokeStyle='#3a2521';cx.beginPath();cx.arc(1,-75,8,.12,Math.PI-.1);cx.stroke();cx.fillStyle='#e8bd76';cx.font='24px Georgia';cx.textAlign='center';cx.fillText('✦',25,-47);cx.restore()}
-function scene(t){let s=state.stage;cx.clearRect(0,0,W,H);let palette=[['#5a94a0','#91b9b0','#246b73'],['#4a7b83','#aecab2','#265e5f'],['#53747d','#afc1af','#255560'],['#193d4d','#4a6464','#10252d'],['#37767f','#a3c2b6','#245569'],['#263b46','#8c8271','#10252b']][s];cx.fillStyle=lin(0,0,0,H,[[0,palette[0]],[.43,palette[1]],[1,palette[2]]]);cx.fillRect(0,0,W,H);glow(1095,118,380,s===3?'#50ddd431':'#fae7b245');ellipse(1098,125,47,47,s===3?'#d4f3d9aa':'#ffebb8b4');for(let i=0;i<14;i++){let x=i*133-30,y=95+45*rnd(i+12);ellipse(x,y,85,18,'#deeed124');ellipse(x+34,y-15,58,25,'#dfebd51b')}path([[0,319],[119,269],[200,295],[351,232],[468,295],[600,248],[747,288],[870,230],[1040,285],[1160,238],[1289,295],[1440,243],[1440,435],[0,435]],'#275c5d75');path([[0,370],[151,343],[321,378],[485,325],[656,377],[788,315],[972,363],[1141,329],[1320,354],[1440,315],[1440,440],[0,440]],'#2c666b98');cx.fillStyle=lin(0,345,0,810,[[0,'#27717a'],[.3,'#1e6872'],[1,'#0d394e']]);cx.fillRect(0,362,W,H-362);if(!state.calm)for(let i=0;i<26;i++)wave(397+i*17,i,t);else for(let i=0;i<14;i++)wave(403+i*27,i,0);
-if(s===0){path([[0,430],[140,418],[285,439],[418,494],[510,560],[655,615],[792,671],[1030,700],[1250,710],[1440,680],[1440,810],[0,810]],lin(0,460,0,810,[[0,'#e2cf9c'],[.5,'#baaa77'],[1,'#6b7c63']]),'#fff2be55',6);for(let i=0;i<150;i++){let x=rnd(i+11)*W,y=540+rnd(i+100)*280;ellipse(x,y,1+rnd(i+7)*2,1,'#fff3bc42')}ship(960,505,.75,state.completed>=1);palm(140,580,.86,1);palm(1355,660,.68,2);rock(530,615,.86);rock(1240,716,.62);woodenSign(760,594,'TELUK LANUN',state.completed>=1)}
-if(s===1){path([[0,545],[210,478],[434,451],[607,507],[727,537],[972,506],[1239,450],[1440,510],[1440,810],[0,810]],lin(0,460,0,810,[[0,'#d9c58e'],[.5,'#a59f6e'],[1,'#5b7153']]),'#f1ddab76',6);palm(95,575,1.38,1);palm(455,494,1.01,2);palm(1360,530,1.3,3);palm(1200,475,.6,4);rock(492,401,.91,'#687d70');rock(811,567,1.2);rock(1265,636,.54);woodenSign(830,537,'RIMBA KELAPA',state.completed>=2);if(state.secret)glow(495,369,72,'#ffd9677e');else glow(495,369,34,'#ffe28a6e');}
+function scene(t){let s=state.stage;cx.clearRect(0,0,W,H);let palette=[['#7ccfe2','#c7eee8','#2fa8b8'],['#78cad9','#d0edc7','#3d9f90'],['#72c4d7','#c8ead8','#3394a3'],['#355f7a','#72918c','#1b3d4a'],['#74cfdf','#c7ead4','#3a98a7'],['#4f7384','#b2a68f','#234551']][s];cx.fillStyle=lin(0,0,0,H,[[0,palette[0]],[.43,palette[1]],[1,palette[2]]]);cx.fillRect(0,0,W,H);glow(1095,118,380,s===3?'#50ddd431':'#fae7b245');ellipse(1098,125,47,47,s===3?'#d4f3d9aa':'#ffebb8b4');for(let i=0;i<14;i++){let x=i*133-30,y=95+45*rnd(i+12);ellipse(x,y,85,18,'#deeed124');ellipse(x+34,y-15,58,25,'#dfebd51b')}path([[0,319],[119,269],[200,295],[351,232],[468,295],[600,248],[747,288],[870,230],[1040,285],[1160,238],[1289,295],[1440,243],[1440,435],[0,435]],'#275c5d75');path([[0,370],[151,343],[321,378],[485,325],[656,377],[788,315],[972,363],[1141,329],[1320,354],[1440,315],[1440,440],[0,440]],'#2c666b98');cx.fillStyle=lin(0,345,0,810,[[0,'#39b9c8'],[.3,'#168ea8'],[1,'#0c5775']]);cx.fillRect(0,362,W,H-362);if(!state.calm)for(let i=0;i<26;i++)wave(397+i*17,i,t);else for(let i=0;i<14;i++)wave(403+i*27,i,0);
+if(s===0){path([[0,430],[140,418],[285,439],[418,494],[510,560],[655,615],[792,671],[1030,700],[1250,710],[1440,680],[1440,810],[0,810]],lin(0,460,0,810,[[0,'#f7da85'],[.5,'#eac36a'],[1,'#78a66f']]),'#fff2be55',6);for(let i=0;i<150;i++){let x=rnd(i+11)*W,y=540+rnd(i+100)*280;ellipse(x,y,1+rnd(i+7)*2,1,'#fff3bc42')}ship(960,505,.75,state.completed>=1);palm(140,580,.86,1);palm(1355,660,.68,2);rock(530,615,.86);rock(1240,716,.62);woodenSign(760,594,'TELUK LANUN',state.completed>=1)}
+if(s===1){path([[0,545],[210,478],[434,451],[607,507],[727,537],[972,506],[1239,450],[1440,510],[1440,810],[0,810]],lin(0,460,0,810,[[0,'#f4d27b'],[.5,'#ddc86e'],[1,'#69a75c']]),'#f1ddab76',6);palm(95,575,1.38,1);palm(455,494,1.01,2);palm(1360,530,1.3,3);palm(1200,475,.6,4);rock(492,401,.91,'#687d70');rock(811,567,1.2);rock(1265,636,.54);woodenSign(830,537,'RIMBA KELAPA',state.completed>=2);if(state.secret)glow(495,369,72,'#ffd9677e');else glow(495,369,34,'#ffe28a6e');}
 if(s===2){path([[0,485],[145,445],[298,457],[410,530],[422,679],[333,810],[0,810]],'#938b70','#e2d2a263',5);path([[1137,468],[1280,446],[1440,496],[1440,810],[1127,810],[1095,645]],'#817d68','#e6d7b45b',5);cx.fillStyle='#0b3342b3';cx.fillRect(422,530,673,280);for(let i=0;i<12;i++)glow(420+i*61,626,95,'#a6d9c213');bridge(766,561,state.completed>=3);palm(87,518,.8);rock(1200,504,.78);woodenSign(1007,565,'JAMBATAN',state.completed>=3)}
 if(s===3){cx.fillStyle='#081c26ab';cx.fillRect(0,0,W,H);path([[0,800],[0,490],[171,410],[355,510],[475,810]],'#405c54','#7c9285',6);path([[1440,810],[1440,393],[1300,467],[1220,810]],'#4d6257','#85948a',6);cave(900,422,state.completed>=4);rock(260,609,1.05);rock(1190,637,.92);for(let i=0;i<18;i++){let x=80+rnd(i)*1320,y=130+rnd(i*3)*410;glow(x,y,18,'#8be6ca32')}woodenSign(448,580,'GUA CAHAYA',state.completed>=4);if(state.choice==='help')npc(550,560,'🧓','Pak Sulaiman');else glow(1250,140,160,'#f6d89141')}
-if(s===4){path([[0,555],[113,509],[330,522],[523,585],[748,553],[1015,536],[1215,493],[1440,536],[1440,810],[0,810]],'#c9b988','#e3d0a4',6);for(let i=0;i<22;i++){let x=80+rnd(i+58)*1330,y=550+rnd(i+77)*185;rock(x,y,.19+rnd(i)*.32,i%2?'#ab8972':'#8c9993')}for(let i=0;i<8;i++){let x=470+i*124;path([[x,552],[x+23,410-rnd(i)*90],[x+55,555]],i%2?'#a45f62':'#647b76','#a9a797',2)}rock(1270,579,1.5,'#7b8379');chest(800,567,state.completed>=5,true);woodenSign(350,555,'KOTA KARANG',state.completed>=5)}
+if(s===4){path([[0,555],[113,509],[330,522],[523,585],[748,553],[1015,536],[1215,493],[1440,536],[1440,810],[0,810]],'#efd58a','#f7e2ad',6);for(let i=0;i<22;i++){let x=80+rnd(i+58)*1330,y=550+rnd(i+77)*185;rock(x,y,.19+rnd(i)*.32,i%2?'#ab8972':'#8c9993')}for(let i=0;i<8;i++){let x=470+i*124;path([[x,552],[x+23,410-rnd(i)*90],[x+55,555]],i%2?'#a45f62':'#647b76','#a9a797',2)}rock(1270,579,1.5,'#7b8379');chest(800,567,state.completed>=5,true);woodenSign(350,555,'KOTA KARANG',state.completed>=5)}
 // Ground position and navigation markers.
 const hot=STAGES[s].hot;glow(hot.x,hot.y-36,110,state.done?'#ffd88a42':'#4ce0bd4f');npc(hot.x,hot.y,STAGES[s].face,STAGES[s].npc,s);if(s===1&&!state.secret){glow(495,378,62,'#ffe8a96e');cx.fillStyle='#ffdc81';cx.font='bold 25px Georgia';cx.fillText('✦',480,337)}hero(state.player.x,state.player.y);
 if(state.done){for(let i=0;i<18;i++){let x=250+rnd(i+80)*990,y=180+rnd(i+33)*420;glow(x,y,14,'#fff3aa42')}}
