@@ -291,3 +291,81 @@ h1{font:900 clamp(19px,3vw,30px) Georgia,serif;color:#fff1b7;margin:0;line-heigh
 @media(prefers-reduced-motion:reduce){
   .route-node.active b{animation:none}
 }
+
+
+/* ===== Sokongan contoh samar ON/OFF untuk murid disleksia ===== */
+.trace-toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:0 0 10px;
+}
+.trace-toggle{
+  min-height:46px;
+  background:linear-gradient(#2f9895,#1c7778);
+  color:#fffaf0;
+  border:2px solid #79d7ca;
+  box-shadow:0 3px 0 #115b60;
+}
+.trace-toggle.off{
+  background:#f3e5bd;
+  color:#5d4a2d;
+  border-color:#c19a5d;
+  box-shadow:0 3px 0 #a8844e;
+}
+.trace-help{
+  color:#58675f;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:700;
+}
+.handwriting-stage{
+  position:relative;
+  overflow:hidden;
+  border:2px dashed #987644;
+  border-radius:11px;
+  background:
+    repeating-linear-gradient(to bottom,#fffef8 0,#fffef8 43px,#c8dcd8 44px,#fffef8 45px);
+}
+#handwritingCanvas{
+  position:relative;
+  z-index:2;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+.trace-guide{
+  position:absolute;
+  z-index:1;
+  inset:0;
+  pointer-events:none;
+  padding:18px 24px;
+  color:#47606a;
+  opacity:.22;
+  user-select:none;
+}
+.trace-label{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.14em;
+  margin-bottom:9px;
+}
+.trace-idiom{
+  font-size:clamp(24px,3vw,34px);
+  font-weight:900;
+  line-height:1.25;
+  margin-bottom:18px;
+}
+.trace-sentence{
+  font-size:clamp(21px,2.7vw,30px);
+  font-weight:800;
+  line-height:1.55;
+  max-width:95%;
+}
+@media(max-width:560px){
+  .trace-guide{padding:14px 16px}
+  .trace-idiom{font-size:23px;margin-bottom:13px}
+  .trace-sentence{font-size:20px}
+  .trace-toolbar>*{width:100%}
+}
