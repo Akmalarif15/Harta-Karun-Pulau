@@ -77,6 +77,7 @@ const state = {
   task2Done: false,
   task3Done: false,
   inputMode: 'keyboard',
+  guideVisible: true,
   strokes: 0,
   drawing: false,
   lastPoint: null,
@@ -306,6 +307,7 @@ function prepareMission() {
   state.task2Done = false;
   state.task3Done = false;
   state.inputMode = 'keyboard';
+  state.guideVisible = true;
   state.strokes = 0;
   state.drawing = false;
   state.lastPoint = null;
@@ -345,7 +347,22 @@ function showMission() {
         '<p>Bina satu ayat bermakna yang mengandungi simpulan bahasa <b>“' + m.idiom + '”</b>. Pilih cara menulis.</p>' +
         '<div class="mode-tabs"><button id="keyboardMode" class="btn secondary" type="button" aria-pressed="true">⌨️ Keyboard</button><button id="mouseMode" class="btn ghost" type="button" aria-pressed="false">🖱️ Mouse</button></div>' +
         '<div id="keyboardArea"><textarea id="ownSentence" class="sentence-input" rows="3" placeholder="Contoh: Tulis ayat lengkap kamu di sini."></textarea></div>' +
-        '<div id="mouseArea" class="handwriting-wrap hidden"><canvas id="handwritingCanvas" width="1100" height="300" aria-label="Ruang tulisan menggunakan mouse atau sentuhan"></canvas><div class="canvas-tools"><button id="clearCanvas" class="btn ghost" type="button">Padam tulisan</button></div><p class="save-note">Tulisan tangan tidak boleh dinilai maknanya secara automatik. Permainan hanya mengesan bahawa murid telah menulis; guru perlu menyemak PNG yang disimpan.</p></div>' +
+        '<div id="mouseArea" class="handwriting-wrap hidden">' +
+        '<div class="trace-toolbar">' +
+          '<button id="toggleTrace" class="btn trace-toggle" type="button" aria-pressed="true">👁️ Contoh samar: ON</button>' +
+          '<span class="trace-help">Boleh tutup apabila sudah yakin menulis sendiri.</span>' +
+        '</div>' +
+        '<div class="handwriting-stage">' +
+          '<div id="traceGuide" class="trace-guide" aria-hidden="true">' +
+            '<div class="trace-label">CONTOH SAMAR</div>' +
+            '<div class="trace-idiom">' + m.idiom + '</div>' +
+            '<div class="trace-sentence">' + m.sentence + '</div>' +
+          '</div>' +
+          '<canvas id="handwritingCanvas" width="1100" height="300" aria-label="Ruang tulisan menggunakan mouse atau sentuhan"></canvas>' +
+        '</div>' +
+        '<div class="canvas-tools"><button id="clearCanvas" class="btn ghost" type="button">Padam tulisan</button></div>' +
+        '<p class="save-note">Ikut contoh samar jika perlu. Murid boleh menutup bantuan ini pada bila-bila masa. Tulisan mouse perlu disemak oleh guru melalui PNG yang disimpan.</p>' +
+      '</div>' +
         '<div class="actions"><button id="checkOwn" class="btn secondary" type="button" disabled>Semak tulisan</button></div>' +
         '<div id="ownFeedback" class="feedback"></div>' +
       '</section>' +
@@ -481,6 +498,13 @@ function bindMissionEvents() {
     $('keyboardMode').className = 'btn ghost';
     $('mouseMode').className = 'btn secondary';
     setupHandwritingCanvas();
+    updateTraceGuide();
+  };
+
+  $('toggleTrace').onclick = function () {
+    state.guideVisible = !state.guideVisible;
+    updateTraceGuide();
+    toast(state.guideVisible ? 'Contoh samar dihidupkan.' : 'Contoh samar disembunyikan.');
   };
 
   $('checkOwn').onclick = function () {
@@ -538,8 +562,20 @@ function finishMissionTasks() {
   $('checkOwn').disabled = true;
   $('keyboardMode').disabled = true;
   $('mouseMode').disabled = true;
+  if ($('toggleTrace')) $('toggleTrace').disabled = true;
   $('saveMission').disabled = false;
   toast('Semua tugasan selesai. Simpan hasil kerja untuk mara.');
+}
+
+function updateTraceGuide() {
+  const guide = $('traceGuide');
+  const button = $('toggleTrace');
+  if (!guide || !button) return;
+
+  guide.classList.toggle('hidden', !state.guideVisible);
+  button.setAttribute('aria-pressed', String(state.guideVisible));
+  button.textContent = state.guideVisible ? '👁️ Contoh samar: ON' : '🙈 Contoh samar: OFF';
+  button.classList.toggle('off', !state.guideVisible);
 }
 
 function setupHandwritingCanvas() {
