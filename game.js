@@ -54,11 +54,11 @@ const missions = [
 ];
 
 const introLines = [
-  { speaker: 'Kapten Mal', face: '🧑‍✈️', text: 'Wah, sebuah kapal lanun! Siapa di sana?' },
+  { speaker: 'Kapten Akmal', face: '🧑‍✈️', text: 'Wah, sebuah kapal lanun! Siapa di sana?' },
   { speaker: 'Kapten Arif', face: '🏴‍☠️', text: 'Aku Kapten Arif. Aku sedang mencari harta karun yang tersembunyi di kepulauan ini.' },
-  { speaker: 'Kapten Mal', face: '🧑‍✈️', text: 'Harta karun? Bolehkah aku ikut serta?' },
+  { speaker: 'Kapten Akmal', face: '🧑‍✈️', text: 'Harta karun? Bolehkah aku ikut serta?' },
   { speaker: 'Kapten Arif', face: '🏴‍☠️', text: 'Boleh! Tetapi kita mesti menyelesaikan lima misi Bahasa Melayu di lima pulau.' },
-  { speaker: 'Kapten Mal', face: '🧑‍✈️', text: 'Baiklah! Mari kita bina dan tulis ayat sehingga harta karun ditemui!' }
+  { speaker: 'Kapten Akmal', face: '🧑‍✈️', text: 'Baiklah! Mari kita bina dan tulis ayat sehingga harta karun ditemui!' }
 ];
 
 const state = {
@@ -86,6 +86,100 @@ const state = {
 
 const STORAGE_KEY = 'misiHartaKarunKaptenMalArif_v1';
 let toastTimer = null;
+
+let audioCtx = null;
+let musicMaster = null;
+let musicTimer = null;
+let musicEnabled = false;
+let musicStep = 0;
+
+const PIRATE_MELODY = [
+  293.66, 349.23, 440.00, 392.00, 349.23, 293.66,
+  261.63, 293.66, 349.23, 392.00, 440.00, 349.23
+];
+const PIRATE_BASS = [146.83,146.83,130.81,130.81,174.61,174.61,146.83,146.83];
+
+function ensureAudio() {
+  if (audioCtx) return true;
+  const AudioCtor = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtor) return false;
+  audioCtx = new AudioCtor();
+  musicMaster = audioCtx.createGain();
+  musicMaster.gain.value = 0.055;
+  musicMaster.connect(audioCtx.destination);
+  return true;
+}
+
+function playTone(freq, when, duration, type, gainValue) {
+  if (!audioCtx || !musicMaster || !musicEnabled) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'triangle';
+  osc.frequency.setValueAtTime(freq, when);
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(gainValue || 0.08, when + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+  osc.connect(gain);
+  gain.connect(musicMaster);
+  osc.start(when);
+  osc.stop(when + duration + 0.03);
+}
+
+function schedulePiratePhrase() {
+  if (!audioCtx || !musicEnabled) return;
+  const now = audioCtx.currentTime + 0.05;
+  const beat = 0.24;
+
+  for (let i = 0; i < 12; i++) {
+    const idx = (musicStep + i) % PIRATE_MELODY.length;
+    const when = now + i * beat;
+    playTone(PIRATE_MELODY[idx], when, beat * 0.72, i % 3 === 0 ? 'square' : 'triangle', i % 3 === 0 ? 0.035 : 0.055);
+    if (i % 3 === 0) {
+      const bassIdx = Math.floor((musicStep + i) / 3) % PIRATE_BASS.length;
+      playTone(PIRATE_BASS[bassIdx], when, beat * 2.2, 'sine', 0.065);
+    }
+  }
+  musicStep = (musicStep + 12) % PIRATE_MELODY.length;
+}
+
+async function startMusic() {
+  if (!ensureAudio()) {
+    toast('Pelayar ini tidak menyokong muzik latar.');
+    return;
+  }
+  if (audioCtx.state === 'suspended') {
+    try { await audioCtx.resume(); } catch (e) {}
+  }
+  musicEnabled = true;
+  if (musicMaster) musicMaster.gain.setTargetAtTime(0.055, audioCtx.currentTime, 0.04);
+  clearInterval(musicTimer);
+  schedulePiratePhrase();
+  musicTimer = setInterval(schedulePiratePhrase, 2880);
+  updateMusicButton();
+}
+
+function stopMusic() {
+  musicEnabled = false;
+  clearInterval(musicTimer);
+  musicTimer = null;
+  if (audioCtx && musicMaster) {
+    musicMaster.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.05);
+  }
+  updateMusicButton();
+}
+
+function updateMusicButton() {
+  const btn = $('musicBtn');
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', String(musicEnabled));
+  btn.textContent = musicEnabled ? '🎵 Muzik: ON' : '🔇 Muzik: OFF';
+}
+
+async function toggleMusic() {
+  if (musicEnabled) stopMusic();
+  else await startMusic();
+}
+
 
 function normalize(text) {
   return String(text || '')
@@ -181,7 +275,7 @@ function titleScreen() {
     '<div class="panel compact">' +
       '<div class="overline">Pengembaraan Bahasa Melayu • Tahun 5</div>' +
       '<h2>🏴‍☠️ Misi Harta Karun</h2>' +
-      '<p class="lead"><b>Bantu Kapten Mal dan Kapten Arif</b> merentasi lima pulau. Setiap pulau mempunyai satu misi simpulan bahasa.</p>' +
+      '<p class="lead"><b>Bantu Kapten Akmal dan Kapten Arif</b> merentasi lima pulau. Setiap pulau mempunyai satu misi simpulan bahasa.</p>' +
       '<div class="support-box">✍️ Setiap misi: <b>tulis simpulan bahasa → susun ayat → bina dan tulis ayat sendiri → simpan hasil kerja.</b></div>' +
       '<div class="actions">' +
         '<button class="btn primary" id="startGame">▶ Mula Permainan</button>' +
@@ -191,12 +285,14 @@ function titleScreen() {
     '</div>'
   );
   $('startGame').onclick = function () {
+    startMusic();
     clearLocal();
     resetProgress();
     startIntro();
   };
   if ($('resumeGame')) {
     $('resumeGame').onclick = function () {
+      startMusic();
       restoreSession(saved);
     };
   }
@@ -236,23 +332,17 @@ function startIntro() {
 
 function renderIntroLine() {
   const d = introLines[state.introIndex];
-  const sideClass = d.speaker === 'Kapten Akmal' || d.speaker === 'Kapten Mal' ? 'left' : 'right';
 
   setOverlay(
-    '<div class="intro-float ' + sideClass + '">' +
-      '<div class="intro-mini">Babak Pembukaan • Dialog ' + (state.introIndex + 1) + ' / ' + introLines.length + '</div>' +
-      '<div class="intro-card">' +
-        '<div class="intro-avatar" aria-hidden="true">' + d.face + '</div>' +
-        '<div class="intro-content">' +
-          '<div class="speaker">' + d.speaker + '</div>' +
-          '<div class="dialog-text">' + d.text + '</div>' +
-        '</div>' +
+    '<div class="intro-dock">' +
+      '<div class="intro-dock-avatar" aria-hidden="true">' + d.face + '</div>' +
+      '<div class="intro-dock-copy">' +
+        '<div class="intro-dock-top"><span class="speaker">' + d.speaker + '</span><span>Dialog ' + (state.introIndex + 1) + ' / ' + introLines.length + '</span></div>' +
+        '<div class="intro-dock-text">' + d.text + '</div>' +
       '</div>' +
-      '<div class="intro-actions">' +
-        '<button class="btn primary" id="nextDialog">' +
-          (state.introIndex === introLines.length - 1 ? '⛵ Belayar ke Pulau 1' : 'Seterusnya →') +
-        '</button>' +
-      '</div>' +
+      '<button class="btn primary intro-next" id="nextDialog">' +
+        (state.introIndex === introLines.length - 1 ? '⛵ Belayar ke Pulau 1' : 'Seterusnya →') +
+      '</button>' +
     '</div>',
     'intro'
   );
@@ -274,7 +364,7 @@ function helpScreen() {
       '<div class="overline">Panduan Ringkas</div>' +
       '<h2>🧭 Cara Bermain</h2>' +
       '<ol class="help-list">' +
-        '<li>Ikuti perjalanan Kapten Mal dan Kapten Arif ke <b>5 pulau</b>.</li>' +
+        '<li>Ikuti perjalanan Kapten Akmal dan Kapten Arif ke <b>5 pulau</b>.</li>' +
         '<li>Di setiap pulau, taip simpulan bahasa dengan betul.</li>' +
         '<li>Klik perkataan untuk menyusun satu ayat yang betul.</li>' +
         '<li>Tulis ayat sendiri menggunakan <b>keyboard</b> atau <b>mouse</b>.</li>' +
@@ -301,7 +391,7 @@ function startTravel(from, to) {
   state.island = to;
   updateHud();
   closeOverlay();
-  $('travelLabel').textContent = '⛵ Kapten Mal & Kapten Arif bergerak ke Pulau ' + (to + 1) + ' • 2 saat';
+  $('travelLabel').textContent = '⛵ Kapten Akmal & Kapten Arif bergerak ke Pulau ' + (to + 1) + ' • 2 saat';
   $('travelLabel').classList.remove('hidden');
 }
 
@@ -706,7 +796,7 @@ function downloadMissionPng(result) {
 
   c.fillStyle = '#ffffff';
   c.font = 'bold 38px Arial';
-  c.fillText('Misi Harta Karun Kapten Mal & Kapten Arif', 55, 65);
+  c.fillText('Misi Harta Karun Kapten Akmal & Kapten Arif', 55, 65);
 
   c.fillStyle = '#25433f';
   c.font = 'bold 31px Arial';
@@ -772,7 +862,7 @@ function finalScreen() {
       '<div class="panel compact">' +
         '<div class="overline">🏆 Penamat Pengembaraan</div>' +
         '<h2>Tahniah! Harta Karun Ditemui!</h2>' +
-        '<div class="dialog-card"><div class="avatar">🧑‍✈️</div><div><div class="speaker">Kapten Mal</div><div class="dialog-text">Kita berjaya! Semua lima misi telah diselesaikan.</div></div></div>' +
+        '<div class="dialog-card"><div class="avatar">🧑‍✈️</div><div><div class="speaker">Kapten Akmal</div><div class="dialog-text">Kita berjaya! Semua lima misi telah diselesaikan.</div></div></div>' +
         '<div class="dialog-card"><div class="avatar">🏴‍☠️</div><div><div class="speaker">Kapten Arif</div><div class="dialog-text">Hebat! Kamu telah membantu kami membina dan menulis ayat menggunakan lima simpulan bahasa.</div></div></div>' +
         '<div class="summary-grid"><div><b>5/5</b><small>Pulau selesai</small></div><div><b>5</b><small>Simpulan bahasa</small></div><div><b>' + state.saved.filter(Boolean).length + '</b><small>Hasil disimpan</small></div></div>' +
         '<div class="actions"><button class="btn success" id="downloadSummary">📄 Simpan Ringkasan</button><button class="btn primary" id="playAgain">↻ Main Semula</button></div>' +
@@ -1122,15 +1212,15 @@ function drawIntroScene() {
   drawPalm(150,500,1.18);
   drawPalm(545,605,.63);
   drawShip(1050,470,.94);
-  drawCaptain(320,650,'Kapten Mal',false,false);
+  drawCaptain(320,650,'Kapten Akmal',false,false);
   drawCaptain(1045,400,'Kapten Arif',true,false);
 
   if(state.screen==='intro'){
     const d=introLines[state.introIndex];
-    if(d.speaker==='Kapten Mal') drawSpeechBubble(360,420,390,115,d.text,'left');
+    if(d.speaker==='Kapten Akmal') drawSpeechBubble(360,420,390,115,d.text,'left');
     else drawSpeechBubble(665,165,530,120,d.text,'right');
   } else {
-    drawSpeechBubble(355,425,390,105,'Kapten Mal ternampak sebuah kapal lanun di tepi pantai.','left');
+    drawSpeechBubble(355,425,390,105,'Kapten Akmal ternampak sebuah kapal lanun di tepi pantai.','left');
   }
 
   roundedRect(520,42,400,52,16,'#063e50d9','#ffd36a',2);
@@ -1177,7 +1267,7 @@ function drawIslandScene(index) {
     for(let i=0;i<7;i++){ctx.fillStyle=i%2?'#7a7d78':'#5e6866';ctx.beginPath();ctx.arc(510+i*55,610+(i%2)*20,27+(i%3)*4,0,Math.PI*2);ctx.fill();}
   }
 
-  drawCaptain(595,615,'Kapten Mal',false,false);
+  drawCaptain(595,615,'Kapten Akmal',false,false);
   drawCaptain(760,615,'Kapten Arif',true,false);
 
   roundedRect(530,370,380,88,18,'#734a28e8','#f0c064',4);
@@ -1245,7 +1335,7 @@ function drawFinalScene() {
 
   drawPalm(345,585,.95);drawPalm(1110,580,.88);
   drawTreasureChest(720,575,1.18,true);
-  drawCaptain(505,655,'Kapten Mal',false,true);
+  drawCaptain(505,655,'Kapten Akmal',false,true);
   drawCaptain(935,655,'Kapten Arif',true,true);
 
   roundedRect(420,48,600,70,20,'#073e50e8','#ffd25d',3);
@@ -1286,6 +1376,7 @@ function render(now) {
 
 $('helpBtn').onclick = helpScreen;
 $('exitBtn').onclick = exitToMenu;
+$('musicBtn').onclick = toggleMusic;
 $('calmBtn').onclick = function () {
   state.calm = !state.calm;
   $('calmBtn').setAttribute('aria-pressed',String(state.calm));
