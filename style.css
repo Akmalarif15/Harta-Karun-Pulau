@@ -247,3 +247,47 @@ h1{font:900 clamp(19px,3vw,30px) Georgia,serif;color:#fff1b7;margin:0;line-heigh
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* ===== Kemasan visual storyboard 2D ===== */
+.game-shell{
+  border-width:4px;
+  border-color:#e7b653;
+  background:#1c9eb6;
+  box-shadow:0 28px 85px #00111da8,inset 0 0 50px #00172233;
+}
+.scene-label{
+  background:linear-gradient(180deg,#0a5c6c,#073e50);
+  border:2px solid #ffd36a;
+  color:#fff5c8;
+  font-size:15px;
+}
+.travel-label{
+  min-width:min(90%,460px);
+  background:linear-gradient(180deg,#0c6c78,#074454);
+  border-color:#ffd36a;
+  color:#fff7d1;
+}
+.panel{
+  background:
+    linear-gradient(#fffdf6,#f8e5b5),
+    repeating-linear-gradient(90deg,#0000 0 18px,#b8823010 18px 19px);
+}
+.dialog-card{
+  background:linear-gradient(135deg,#fff9df,#ffefb8);
+}
+.idiom-badge{
+  box-shadow:0 4px 0 #075657;
+}
+.task{
+  box-shadow:0 5px 0 #b27d3430;
+}
+.route-node.active b{
+  animation:routePulse 1.25s ease-in-out infinite alternate;
+}
+@keyframes routePulse{
+  from{box-shadow:0 0 0 3px #ffc84a28}
+  to{box-shadow:0 0 0 8px #ffc84a18}
+}
+@media(prefers-reduced-motion:reduce){
+  .route-node.active b{animation:none}
+}
