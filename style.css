@@ -474,3 +474,86 @@ h1{font:900 clamp(19px,3vw,30px) Georgia,serif;color:#fff1b7;margin:0;line-heigh
     font-size:16px;
   }
 }
+
+
+/* ===== Pilihan A: speech bubble pada watak + dialog kecil di bawah ===== */
+.overlay.overlay-intro{
+  align-items:flex-end;
+  justify-content:center;
+  padding:14px 18px 16px;
+  background:transparent;
+  backdrop-filter:none;
+  overflow:hidden;
+  pointer-events:none;
+}
+.intro-dock{
+  pointer-events:auto;
+  width:min(760px,96%);
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:11px 12px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#fff9dfef,#f7dfa9f2);
+  border:3px solid #d99c38;
+  box-shadow:0 12px 30px #00131f66,inset 0 0 0 3px #fff7dc;
+  color:#24383b;
+}
+.intro-dock-avatar{
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#0b7380;
+  border:3px solid #ffc956;
+  font-size:23px;
+}
+.intro-dock-copy{min-width:0}
+.intro-dock-top{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-bottom:3px;
+  color:#7b6b51;
+  font-size:11px;
+  font-weight:800;
+}
+.intro-dock-top .speaker{
+  color:#8a5a22;
+  font-size:12px;
+}
+.intro-dock-text{
+  font-size:15px;
+  line-height:1.48;
+  font-weight:800;
+  color:#24383b;
+}
+.intro-next{
+  min-width:142px;
+  min-height:46px;
+  padding:9px 13px;
+}
+.music-btn[aria-pressed="true"]{
+  background:linear-gradient(#2e9f78,#1f7a5f);
+  border-color:#87dfb0;
+  color:#fffbe6;
+}
+@media(max-width:720px){
+  .intro-dock{
+    grid-template-columns:auto minmax(0,1fr);
+  }
+  .intro-next{
+    grid-column:1/-1;
+    width:100%;
+  }
+}
+@media(max-width:480px){
+  .overlay.overlay-intro{padding:8px}
+  .intro-dock{width:100%;padding:9px;gap:8px}
+  .intro-dock-avatar{width:42px;height:42px;font-size:20px}
+  .intro-dock-text{font-size:14px}
+}
