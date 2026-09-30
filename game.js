@@ -78,6 +78,7 @@ const state = {
   task3Done: false,
   inputMode: 'keyboard',
   guideVisible: true,
+  drawTool: 'pen',
   strokes: 0,
   drawing: false,
   lastPoint: null,
@@ -413,6 +414,7 @@ function prepareMission() {
   state.task3Done = false;
   state.inputMode = 'keyboard';
   state.guideVisible = true;
+  state.drawTool = 'pen';
   state.strokes = 0;
   state.drawing = false;
   state.lastPoint = null;
@@ -455,18 +457,20 @@ function showMission() {
         '<div id="mouseArea" class="handwriting-wrap hidden">' +
         '<div class="trace-toolbar">' +
           '<button id="toggleTrace" class="btn trace-toggle" type="button" aria-pressed="true">👁️ Contoh samar: ON</button>' +
-          '<span class="trace-help">Boleh tutup apabila sudah yakin menulis sendiri.</span>' +
+          '<span class="trace-help">Ikut tulisan samar pada garisan. Tutup bantuan apabila sudah yakin.</span>' +
+        '</div>' +
+        '<div class="canvas-tools top-tools">' +
+          '<button id="penTool" class="btn secondary draw-tool active" type="button" aria-pressed="true">✏️ Pensel</button>' +
+          '<button id="eraserTool" class="btn ghost draw-tool" type="button" aria-pressed="false">🧽 Pemadam</button>' +
         '</div>' +
         '<div class="handwriting-stage">' +
-          '<div id="traceGuide" class="trace-guide" aria-hidden="true">' +
-            '<div class="trace-label">CONTOH SAMAR</div>' +
-            '<div class="trace-idiom">' + m.idiom + '</div>' +
-            '<div class="trace-sentence">' + m.sentence + '</div>' +
-          '</div>' +
+          '<canvas id="guideCanvas" width="1100" height="300" aria-hidden="true"></canvas>' +
           '<canvas id="handwritingCanvas" width="1100" height="300" aria-label="Ruang tulisan menggunakan mouse atau sentuhan"></canvas>' +
         '</div>' +
-        '<div class="canvas-tools"><button id="clearCanvas" class="btn ghost" type="button">Padam tulisan</button></div>' +
-        '<p class="save-note">Ikut contoh samar jika perlu. Murid boleh menutup bantuan ini pada bila-bila masa. Tulisan mouse perlu disemak oleh guru melalui PNG yang disimpan.</p>' +
+        '<div class="canvas-tools">' +
+          '<button id="clearCanvas" class="btn ghost" type="button">🗑️ Padam semua tulisan</button>' +
+        '</div>' +
+        '<p class="save-note">Contoh samar berada terus pada garisan ruang menulis. Gunakan Pensel untuk menulis dan Pemadam untuk memadam bahagian tertentu.</p>' +
       '</div>' +
         '<div class="actions"><button id="checkOwn" class="btn secondary" type="button" disabled>Semak tulisan</button></div>' +
         '<div id="ownFeedback" class="feedback"></div>' +
@@ -603,13 +607,25 @@ function bindMissionEvents() {
     $('keyboardMode').className = 'btn ghost';
     $('mouseMode').className = 'btn secondary';
     setupHandwritingCanvas();
+    drawTraceGuide();
     updateTraceGuide();
+    updateDrawingTools();
   };
 
   $('toggleTrace').onclick = function () {
     state.guideVisible = !state.guideVisible;
     updateTraceGuide();
     toast(state.guideVisible ? 'Contoh samar dihidupkan.' : 'Contoh samar disembunyikan.');
+  };
+
+  $('penTool').onclick = function () {
+    state.drawTool = 'pen';
+    updateDrawingTools();
+  };
+
+  $('eraserTool').onclick = function () {
+    state.drawTool = 'eraser';
+    updateDrawingTools();
   };
 
   $('checkOwn').onclick = function () {
@@ -668,12 +684,14 @@ function finishMissionTasks() {
   $('keyboardMode').disabled = true;
   $('mouseMode').disabled = true;
   if ($('toggleTrace')) $('toggleTrace').disabled = true;
+  if ($('penTool')) $('penTool').disabled = true;
+  if ($('eraserTool')) $('eraserTool').disabled = true;
   $('saveMission').disabled = false;
   toast('Semua tugasan selesai. Simpan hasil kerja untuk mara.');
 }
 
 function updateTraceGuide() {
-  const guide = $('traceGuide');
+  const guide = $('guideCanvas');
   const button = $('toggleTrace');
   if (!guide || !button) return;
 
@@ -681,6 +699,56 @@ function updateTraceGuide() {
   button.setAttribute('aria-pressed', String(state.guideVisible));
   button.textContent = state.guideVisible ? '👁️ Contoh samar: ON' : '🙈 Contoh samar: OFF';
   button.classList.toggle('off', !state.guideVisible);
+}
+
+function updateDrawingTools() {
+  const pen = $('penTool');
+  const eraser = $('eraserTool');
+  if (!pen || !eraser) return;
+
+  const penActive = state.drawTool === 'pen';
+  pen.setAttribute('aria-pressed', String(penActive));
+  eraser.setAttribute('aria-pressed', String(!penActive));
+  pen.className = penActive ? 'btn secondary draw-tool active' : 'btn ghost draw-tool';
+  eraser.className = penActive ? 'btn ghost draw-tool' : 'btn secondary draw-tool active';
+}
+
+function drawTraceGuide() {
+  const c = $('guideCanvas');
+  if (!c) return;
+  const g = c.getContext('2d');
+  const m = missions[state.island];
+
+  g.clearRect(0,0,c.width,c.height);
+  g.save();
+  g.globalAlpha = 0.18;
+  g.fillStyle = '#334e57';
+  g.textBaseline = 'alphabetic';
+
+  // Simpulan bahasa pada baris pertama.
+  g.font = '700 42px Arial';
+  g.fillText(m.idiom, 28, 39);
+
+  // Ayat contoh bermula pada baris ketiga supaya ruang tidak terlalu padat.
+  g.font = '700 38px Arial';
+  const maxWidth = c.width - 56;
+  const words = m.sentence.split(' ');
+  let line = '';
+  let y = 132;
+  const lineHeight = 45;
+
+  for (let i = 0; i < words.length; i++) {
+    const test = line + words[i] + ' ';
+    if (g.measureText(test).width > maxWidth && line) {
+      g.fillText(line.trim(), 28, y);
+      line = words[i] + ' ';
+      y += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  g.fillText(line.trim(), 28, y);
+  g.restore();
 }
 
 function setupHandwritingCanvas() {
@@ -712,12 +780,25 @@ function setupHandwritingCanvas() {
     if (!state.drawing) return;
     e.preventDefault();
     const p = point(e);
+
+    x.save();
+    if (state.drawTool === 'eraser') {
+      x.globalCompositeOperation = 'destination-out';
+      x.lineWidth = 34;
+    } else {
+      x.globalCompositeOperation = 'source-over';
+      x.strokeStyle = '#173e49';
+      x.lineWidth = 6;
+    }
+
     x.beginPath();
     x.moveTo(state.lastPoint.x, state.lastPoint.y);
     x.lineTo(p.x, p.y);
     x.stroke();
+    x.restore();
+
     state.lastPoint = p;
-    state.strokes++;
+    if (state.drawTool === 'pen') state.strokes++;
   });
 
   function stop() {
