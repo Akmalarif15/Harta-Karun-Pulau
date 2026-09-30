@@ -156,13 +156,17 @@ function updateHud() {
   });
 }
 
-function setOverlay(html) {
+function setOverlay(html, mode = 'normal') {
   overlay.innerHTML = html;
+  overlay.className = 'overlay';
+  if (mode === 'intro') {
+    overlay.classList.add('overlay-intro');
+  }
   overlay.classList.remove('hidden');
 }
 
 function closeOverlay() {
-  overlay.classList.add('hidden');
+  overlay.className = 'overlay hidden';
   overlay.innerHTML = '';
 }
 
@@ -232,20 +236,27 @@ function startIntro() {
 
 function renderIntroLine() {
   const d = introLines[state.introIndex];
+  const sideClass = d.speaker === 'Kapten Akmal' || d.speaker === 'Kapten Mal' ? 'left' : 'right';
+
   setOverlay(
-    '<div class="panel compact">' +
-      '<div class="overline">Babak Pembukaan • Tepi Pantai</div>' +
-      '<h2>⚓ Pertemuan Dua Kapten</h2>' +
-      '<div class="dialog-card">' +
-        '<div class="avatar" aria-hidden="true">' + d.face + '</div>' +
-        '<div><div class="speaker">' + d.speaker + '</div><div class="dialog-text">' + d.text + '</div></div>' +
+    '<div class="intro-float ' + sideClass + '">' +
+      '<div class="intro-mini">Babak Pembukaan • Dialog ' + (state.introIndex + 1) + ' / ' + introLines.length + '</div>' +
+      '<div class="intro-card">' +
+        '<div class="intro-avatar" aria-hidden="true">' + d.face + '</div>' +
+        '<div class="intro-content">' +
+          '<div class="speaker">' + d.speaker + '</div>' +
+          '<div class="dialog-text">' + d.text + '</div>' +
+        '</div>' +
       '</div>' +
-      '<p class="save-note">Dialog ' + (state.introIndex + 1) + ' daripada ' + introLines.length + '</p>' +
-      '<div class="actions">' +
-        '<button class="btn primary" id="nextDialog">' + (state.introIndex === introLines.length - 1 ? '⛵ Belayar ke Pulau 1' : 'Seterusnya →') + '</button>' +
+      '<div class="intro-actions">' +
+        '<button class="btn primary" id="nextDialog">' +
+          (state.introIndex === introLines.length - 1 ? '⛵ Belayar ke Pulau 1' : 'Seterusnya →') +
+        '</button>' +
       '</div>' +
-    '</div>'
+    '</div>',
+    'intro'
   );
+
   $('nextDialog').onclick = function () {
     if (state.introIndex < introLines.length - 1) {
       state.introIndex++;
