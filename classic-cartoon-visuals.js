@@ -3,10 +3,9 @@
 
 (function () {
    const avatarAkmal = new Image();
-avatarAkmal.src = 'assets/characters/kapten_akmal.png';
-
+avatarAkmal.src = 'assets/characters/kapten_akmal.png?v=2';
 const avatarArif = new Image();
-avatarArif.src = 'assets/characters/kapten_arif.png';
+avatarArif.src = 'assets/characters/kapten_arif.png?v=2';
   function rr(x,y,w,h,r,fill,stroke,lw){
     const q=Math.min(r,w/2,h/2);
     ctx.beginPath();
