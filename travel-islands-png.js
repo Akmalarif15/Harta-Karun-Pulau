@@ -1,50 +1,96 @@
 /* Paparkan lima PNG pulau pada skrin perjalanan.
-   Fail ini hanya menukar grafik peta perjalanan; kandungan dan logik permainan kekal. */
+   Perjalanan hanya bermula selepas semua imej pulau siap dimuat dan diproses. */
 (function () {
   const sources = [
-    'assets/islands/island_1.png?v=2',
-    'assets/islands/island_2.png?v=2',
-    'assets/islands/island_3.png?v=2',
-    'assets/islands/island_4.png?v=2',
-    'assets/islands/island_5.png?v=2'
+    'assets/islands/island_1.png?v=3',
+    'assets/islands/island_2.png?v=3',
+    'assets/islands/island_3.png?v=3',
+    'assets/islands/island_4.png?v=3',
+    'assets/islands/island_5.png?v=3'
   ];
 
   const islandAssets = new Array(5).fill(null);
+  let assetsReady = false;
 
   function removeWhiteBackground(img) {
     const off = document.createElement('canvas');
     off.width = img.naturalWidth;
     off.height = img.naturalHeight;
     const ox = off.getContext('2d');
-    ox.drawImage(img, 0, 0);
+
+    if (!ox) return img;
 
     try {
+      ox.drawImage(img, 0, 0);
       const imageData = ox.getImageData(0, 0, off.width, off.height);
       const d = imageData.data;
+
       for (let i = 0; i < d.length; i += 4) {
-        const r = d[i], g = d[i + 1], b = d[i + 2];
+        const r = d[i];
+        const g = d[i + 1];
+        const b = d[i + 2];
         const min = Math.min(r, g, b);
+
         if (min > 248) {
           d[i + 3] = 0;
         } else if (min > 238) {
           d[i + 3] = Math.min(d[i + 3], Math.round((248 - min) * 25.5));
         }
       }
+
       ox.putImageData(imageData, 0, 0);
+      return off;
     } catch (e) {
-      // Jika pemprosesan piksel gagal, gunakan imej asal.
       return img;
     }
-    return off;
   }
 
-  sources.forEach(function (src, index) {
-    const img = new Image();
-    img.onload = function () {
-      islandAssets[index] = removeWhiteBackground(img);
-    };
-    img.src = src;
+  function loadAsset(src, index) {
+    return new Promise(function (resolve) {
+      const img = new Image();
+
+      img.onload = function () {
+        islandAssets[index] = removeWhiteBackground(img);
+        resolve(true);
+      };
+
+      img.onerror = function () {
+        islandAssets[index] = null;
+        resolve(false);
+      };
+
+      img.src = src;
+    });
+  }
+
+  const readyPromise = Promise.all(
+    sources.map(function (src, index) {
+      return loadAsset(src, index);
+    })
+  ).then(function () {
+    assetsReady = true;
   });
+
+  /* PNG asal agak besar. Pastikan peta tidak bermula ketika aset masih null,
+     kerana keadaan itu menyebabkan pulau fallback lama dipaparkan. */
+  if (typeof startTravel === 'function') {
+    const originalStartTravel = startTravel;
+
+    startTravel = function (from, to) {
+      if (assetsReady) {
+        originalStartTravel(from, to);
+        return;
+      }
+
+      const nextButton = document.getElementById('nextDialog');
+      if (nextButton) nextButton.disabled = true;
+
+      readyPromise.then(function () {
+        if (nextButton) nextButton.disabled = false;
+        originalStartTravel(from, to);
+      });
+    };
+  }
 
   function roundedRect(x, y, w, h, r, fill, stroke, lineWidth) {
     const q = Math.min(r, w / 2, h / 2);
@@ -75,14 +121,6 @@
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = '#2f8f4c';
-    ctx.beginPath();
-    ctx.arc(p.x - 18, p.y - 31, 22, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(p.x + 15, p.y - 32, 18, 0, Math.PI * 2);
-    ctx.fill();
-
     ctx.fillStyle = '#314954';
     ctx.font = 'bold 18px Arial';
     ctx.textAlign = 'center';
@@ -92,35 +130,37 @@
 
   function drawIslandPng(p, number) {
     const asset = islandAssets[number - 1];
+
     if (!asset) {
       fallbackIsland(p, number);
       return;
     }
 
     const ratio = asset.width / asset.height;
-    let w = 188;
+    let w = 205;
     let h = w / ratio;
-    if (h > 145) {
-      h = 145;
+
+    if (h > 155) {
+      h = 155;
       w = h * ratio;
     }
 
     ctx.save();
     ctx.drawImage(asset, p.x - w / 2, p.y - h * 0.72, w, h);
 
-    // Nombor pulau supaya laluan masih jelas.
-    ctx.fillStyle = 'rgba(255,255,255,.93)';
+    ctx.fillStyle = 'rgba(255,255,255,.94)';
     ctx.strokeStyle = '#355866';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(p.x, p.y + 25, 17, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y + 27, 17, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+
     ctx.fillStyle = '#284957';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(String(number), p.x, p.y + 25);
+    ctx.fillText(String(number), p.x, p.y + 27);
     ctx.restore();
   }
 
@@ -143,7 +183,6 @@
       { x: 1240, y: 490 }
     ];
 
-    // Laluan bertitik.
     ctx.save();
     ctx.strokeStyle = '#f8f1c5';
     ctx.lineWidth = 5;
@@ -157,7 +196,6 @@
     ctx.setLineDash([]);
     ctx.restore();
 
-    // Titik mula.
     roundedRect(55, 590, 160, 64, 30, '#efd27b', '#9b7a3d', 3);
     ctx.fillStyle = '#314954';
     ctx.font = 'bold 18px Arial';
@@ -165,7 +203,6 @@
     ctx.textBaseline = 'middle';
     ctx.fillText('Mula', 135, 622);
 
-    // Lima pulau PNG.
     for (let i = 1; i < pts.length; i++) {
       drawIslandPng(pts[i], i);
     }
@@ -184,7 +221,6 @@
       drawCaptain(x + 24, y - 46, '', true, false);
     }
 
-    // Bar kemajuan: peratus sahaja.
     roundedRect(500, 700, 440, 42, 18, '#f8fbf6', '#334b59', 3);
     ctx.fillStyle = '#e7d05d';
     ctx.fillRect(515, 714, 410 * progress, 14);
