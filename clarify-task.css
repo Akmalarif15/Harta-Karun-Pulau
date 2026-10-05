@@ -1,0 +1,33 @@
+/* Paparan simpulan bahasa yang lebih jelas untuk murid disleksia */
+.idiom-info-row{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+  line-height:1.55;
+}
+.idiom-info-row + .idiom-info-row{
+  margin-top:4px;
+}
+.idiom-info-label{
+  min-width:120px;
+  font-weight:900;
+  color:#2f5548;
+}
+.idiom-info-word{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:8px;
+  background:#fff5b8;
+  color:#315046;
+  font-size:1.08em;
+}
+#task1 > p strong{
+  color:#315046;
+  background:#fff2a8;
+  padding:1px 5px;
+  border-radius:6px;
+}
+@media(max-width:560px){
+  .idiom-info-label{min-width:100%}
+}
