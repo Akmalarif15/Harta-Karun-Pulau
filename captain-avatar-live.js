@@ -7,13 +7,13 @@
   const drawCaptainAsal = drawCaptain;
 
   const avatarAkmalBaharu = new Image();
-  avatarAkmalBaharu.src = 'assets/characters/kapten_akmal.png?v=3';
+  avatarAkmalBaharu.src = 'assets/characters/kapten_akmal.png?v=4';
 
   const avatarArifBaharu = new Image();
-  avatarArifBaharu.src = 'assets/characters/kapten_arif.png?v=3';
+  avatarArifBaharu.src = 'assets/characters/kapten_arif.png?v=4';
 
   const TEMPOH_GERAKAN = 10;
-  const SUDUT_MAKS = 1.6 * Math.PI / 180;
+  const SUDUT_MAKS = 1.4 * Math.PI / 180;
 
   function lukisLabelNama(name, yAtas) {
     if (!name) return;
@@ -53,24 +53,27 @@
     const fasa = isArif ? Math.PI : 0;
     const masa = state.t * Math.PI * 2 / TEMPOH_GERAKAN;
     const sudut = gerakanTenang ? 0 : Math.sin(masa + fasa) * SUDUT_MAKS;
-    const terapung = gerakanTenang ? 0 : Math.cos(masa + fasa) * 2.2;
 
+    // Tapak kaki dikunci pada permukaan supaya watak tidak kelihatan terapung.
+    const tapakY = isArif ? y + 29 : y + 27;
+
+    // Bayang kekal pada permukaan dan tidak ikut putaran badan.
     ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(sudut);
-    ctx.translate(0, terapung);
-
-    // Bayang lembut di bawah kaki.
     ctx.fillStyle = 'rgba(35, 70, 75, 0.24)';
     ctx.beginPath();
-    ctx.ellipse(0, 18, 46, 11, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, tapakY + 2, 46, 10, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.restore();
 
-    // Avatar PNG penuh.
-    const atas = -height + 24;
+    // Putaran berlaku pada titik tapak kaki, bukan di tengah badan.
+    ctx.save();
+    ctx.translate(x, tapakY);
+    ctx.rotate(sudut);
+
+    const atas = -height;
     ctx.drawImage(img, -width / 2, atas, width, height);
-
     lukisLabelNama(name, atas);
+
     ctx.restore();
   };
 })();
