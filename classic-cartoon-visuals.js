@@ -6,6 +6,22 @@
 avatarAkmal.src = 'assets/characters/kapten_akmal.png?v=6';
 const avatarArif = new Image();
 avatarArif.src = 'assets/characters/kapten_arif.png?v=6';
+   const island1 = new Image();
+island1.src = 'assets/islands/island_1.png?v=1';
+
+const island2 = new Image();
+island2.src = 'assets/islands/island_2.png?v=1';
+
+const island3 = new Image();
+island3.src = 'assets/islands/island_3.png?v=1';
+
+const island4 = new Image();
+island4.src = 'assets/islands/island_4.png?v=1';
+
+const island5 = new Image();
+island5.src = 'assets/islands/island_5.png?v=1';
+
+const islandImages = [island1, island2, island3, island4, island5];
   function rr(x,y,w,h,r,fill,stroke,lw){
     const q=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -299,207 +315,29 @@ avatarArif.src = 'assets/characters/kapten_arif.png?v=6';
     ctx.beginPath();ctx.arc(0,0,11,Math.PI,0);ctx.lineTo(11,7);ctx.lineTo(-11,7);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
   }
 
-  function drawIslandArt(index){
-  // Pulau 1 — tebing tinggi di kiri
-  if(index===0){
-    ctx.fillStyle='#f0d37d';
-    ctx.strokeStyle='#d5a35d';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(90,660);
-    ctx.quadraticCurveTo(180,600,320,575);
-    ctx.quadraticCurveTo(520,535,760,555);
-    ctx.quadraticCurveTo(980,570,1180,625);
-    ctx.quadraticCurveTo(1275,650,1350,675);
-    ctx.lineTo(1350,810);
-    ctx.lineTo(90,810);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+ function drawIslandArt(index){
+  const img = islandImages[index];
 
-    rockPeak(240,520,170,310,'#c87a54');
-    rockPeak(390,565,115,205,'#b86548');
-
-    drawPalm(845,605,.90);
-    drawPalm(1015,620,.70);
-    drawPalm(1165,630,.55);
-
-    bushBlob(760,600,.92);
-    shellMark(540,690,'#f09cb8');
-    shellMark(1215,682,'#9d74d5');
+  if (!img || !img.complete || img.naturalWidth === 0) {
+    return;
   }
 
-  // Pulau 2 — bentuk bulan sabit dengan lagun kecil
-  else if(index===1){
-    ctx.fillStyle='#f0d37d';
-    ctx.strokeStyle='#d5a35d';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(120,690);
-    ctx.quadraticCurveTo(230,605,430,585);
-    ctx.quadraticCurveTo(650,565,835,620);
-    ctx.quadraticCurveTo(980,665,1170,655);
-    ctx.quadraticCurveTo(1260,650,1335,610);
-    ctx.quadraticCurveTo(1285,700,1140,720);
-    ctx.quadraticCurveTo(930,748,720,732);
-    ctx.quadraticCurveTo(470,716,260,728);
-    ctx.quadraticCurveTo(160,732,120,690);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+  const width = 1180;
+  const height = width * (img.naturalHeight / img.naturalWidth);
 
-    // Lagun
-    ctx.fillStyle='#7bd0ea';
-    ctx.strokeStyle='#4ba5c6';
-    ctx.lineWidth=4;
-    ctx.beginPath();
-    ctx.moveTo(750,650);
-    ctx.quadraticCurveTo(840,610,945,635);
-    ctx.quadraticCurveTo(1020,655,1045,700);
-    ctx.quadraticCurveTo(945,688,860,695);
-    ctx.quadraticCurveTo(790,700,730,680);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+  ctx.save();
 
-    rockPeak(300,610,88,135,'#b86548');
-    drawPalm(320,600,.80);
-    drawPalm(1105,612,.78);
-    drawPalm(1185,630,.58);
+  ctx.drawImage(
+    img,
+    720 - width / 2,
+    625 - height / 2,
+    width,
+    height
+  );
 
-    shellMark(520,700,'#f08fa9');
-    shellMark(1210,695,'#9e79d8');
-  }
-
-  // Pulau 3 — dua puncak gunung di tengah
-  else if(index===2){
-    ctx.fillStyle='#f0d37d';
-    ctx.strokeStyle='#d5a35d';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(120,700);
-    ctx.quadraticCurveTo(250,620,430,605);
-    ctx.quadraticCurveTo(610,592,720,565);
-    ctx.quadraticCurveTo(870,532,1040,575);
-    ctx.quadraticCurveTo(1190,612,1325,695);
-    ctx.lineTo(1325,810);
-    ctx.lineTo(120,810);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    rockPeak(555,575,150,250,'#c77a58');
-    rockPeak(760,535,188,315,'#b56248');
-    rockPeak(930,592,92,150,'#cf8a63');
-
-    drawPalm(300,650,.72);
-    drawPalm(1125,640,.84);
-    bushBlob(260,640,.62);
-    bushBlob(1180,645,.56);
-
-    shellMark(465,705,'#8a77d8');
-    shellMark(1000,705,'#ee9bb6');
-  }
-
-  // Pulau 4 — pulau panjang mendatar dengan gerbang batu
-  else if(index===3){
-    ctx.fillStyle='#f0d37d';
-    ctx.strokeStyle='#d5a35d';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(70,690);
-    ctx.quadraticCurveTo(210,642,390,640);
-    ctx.quadraticCurveTo(610,636,840,622);
-    ctx.quadraticCurveTo(1030,610,1225,630);
-    ctx.quadraticCurveTo(1300,638,1365,665);
-    ctx.lineTo(1365,810);
-    ctx.lineTo(70,810);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Gerbang batu
-    ctx.fillStyle='#b56f56';
-    ctx.strokeStyle='#8d5541';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(980,648);
-    ctx.lineTo(1005,535);
-    ctx.quadraticCurveTo(1020,470,1080,470);
-    ctx.quadraticCurveTo(1140,470,1156,535);
-    ctx.lineTo(1182,648);
-    ctx.lineTo(1130,648);
-    ctx.lineTo(1116,564);
-    ctx.quadraticCurveTo(1107,528,1080,528);
-    ctx.quadraticCurveTo(1053,528,1044,564);
-    ctx.lineTo(1030,648);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    drawPalm(355,625,.96);
-    drawPalm(525,632,.78);
-    drawPalm(685,638,.58);
-
-    shellMark(860,690,'#ef96b3');
-    shellMark(1235,688,'#a37bdd');
-  }
-
-  // Pulau 5 — pulau berbukit bulat dengan teluk kecil
-  else {
-    ctx.fillStyle='#f0d37d';
-    ctx.strokeStyle='#d5a35d';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(105,700);
-    ctx.quadraticCurveTo(245,625,430,610);
-    ctx.quadraticCurveTo(560,598,650,560);
-    ctx.quadraticCurveTo(760,515,880,548);
-    ctx.quadraticCurveTo(980,575,1070,620);
-    ctx.quadraticCurveTo(1160,665,1320,695);
-    ctx.lineTo(1320,810);
-    ctx.lineTo(105,810);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Bukit bulat
-    ctx.fillStyle='#7fb05b';
-    ctx.strokeStyle='#5b8c42';
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(500,645);
-    ctx.quadraticCurveTo(560,555,705,530);
-    ctx.quadraticCurveTo(860,505,980,585);
-    ctx.quadraticCurveTo(1015,610,1040,645);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Teluk kecil / lekuk air
-    ctx.fillStyle='#7bd0ea';
-    ctx.strokeStyle='#4ba5c6';
-    ctx.lineWidth=4;
-    ctx.beginPath();
-    ctx.moveTo(760,680);
-    ctx.quadraticCurveTo(805,655,860,670);
-    ctx.quadraticCurveTo(830,708,770,705);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    rockPeak(320,620,88,128,'#b86a4f');
-    drawPalm(325,610,.78);
-    drawPalm(1095,625,.88);
-    drawPalm(1190,640,.58);
-
-    bushBlob(1140,640,.58);
-    shellMark(560,700,'#f19bb6');
-    shellMark(1225,705,'#9176d4');
-  }
+  ctx.restore();
 }
-
-  drawIslandScene = function(index){
+   drawIslandScene = function(index){
     const safeIndex=Math.max(0,Math.min(index,4));
     const m=missions[safeIndex];
     drawSkySea('#91bbd1','#579493');
