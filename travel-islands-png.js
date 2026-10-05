@@ -1,5 +1,5 @@
 /* Paparkan lima PNG pulau pada skrin perjalanan.
-   Perjalanan hanya bermula selepas semua imej pulau siap dimuat dan diproses. */
+   Perjalanan hanya bermula selepas semua imej pulau dan pesisiran pantai siap dimuat. */
 (function () {
   const sources = [
     'assets/islands/island_1.png?v=3',
@@ -10,6 +10,8 @@
   ];
 
   const islandAssets = new Array(5).fill(null);
+  const startShore = new Image();
+  let startShoreReady = false;
   let assetsReady = false;
 
   function removeWhiteBackground(img) {
@@ -63,16 +65,29 @@
     });
   }
 
+  function loadStartShore() {
+    return new Promise(function (resolve) {
+      startShore.onload = function () {
+        startShoreReady = true;
+        resolve(true);
+      };
+      startShore.onerror = function () {
+        startShoreReady = false;
+        resolve(false);
+      };
+      startShore.src = 'assets/islands/start_shore.png?v=2';
+    });
+  }
+
   const readyPromise = Promise.all(
     sources.map(function (src, index) {
       return loadAsset(src, index);
-    })
+    }).concat([loadStartShore()])
   ).then(function () {
     assetsReady = true;
   });
 
-  /* PNG asal agak besar. Pastikan peta tidak bermula ketika aset masih null,
-     kerana keadaan itu menyebabkan pulau fallback lama dipaparkan. */
+  /* Pastikan peta tidak bermula ketika aset masih belum siap dimuat. */
   if (typeof startTravel === 'function') {
     const originalStartTravel = startTravel;
 
@@ -164,6 +179,51 @@
     ctx.restore();
   }
 
+  function drawStartShore() {
+    if (!startShoreReady || !startShore.naturalWidth) return;
+
+    const sx = 0;
+    const sy = Math.round(startShore.naturalHeight * 0.28);
+    const sw = Math.round(startShore.naturalWidth * 0.53);
+    const sh = Math.round(startShore.naturalHeight * 0.72);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, 446);
+    ctx.bezierCurveTo(118, 430, 250, 470, 322, 548);
+    ctx.bezierCurveTo(356, 590, 340, 667, 285, 720);
+    ctx.bezierCurveTo(218, 780, 112, 798, 0, 780);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.drawImage(
+      startShore,
+      sx, sy, sw, sh,
+      -8, 425, 360, 375
+    );
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,.78)';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(0, 446);
+    ctx.bezierCurveTo(118, 430, 250, 470, 322, 548);
+    ctx.bezierCurveTo(356, 590, 340, 667, 285, 720);
+    ctx.bezierCurveTo(218, 780, 112, 798, 0, 780);
+    ctx.stroke();
+
+    ctx.font = 'bold 22px Arial';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.strokeText('Mula', 50, 650);
+    ctx.fillStyle = '#365467';
+    ctx.fillText('Mula', 50, 650);
+    ctx.restore();
+  }
+
   drawTravel = function (progress) {
     if (typeof drawSkySea === 'function') {
       drawSkySea('#8fb9d1', '#579493');
@@ -174,8 +234,10 @@
       ctx.fillRect(0, 430, canvas.width, canvas.height - 430);
     }
 
+    drawStartShore();
+
     const pts = [
-      { x: 135, y: 620 },
+      { x: 170, y: 620 },
       { x: 340, y: 500 },
       { x: 550, y: 625 },
       { x: 770, y: 485 },
@@ -195,13 +257,6 @@
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
-
-    roundedRect(55, 590, 160, 64, 30, '#efd27b', '#9b7a3d', 3);
-    ctx.fillStyle = '#314954';
-    ctx.font = 'bold 18px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Mula', 135, 622);
 
     for (let i = 1; i < pts.length; i++) {
       drawIslandPng(pts[i], i);
