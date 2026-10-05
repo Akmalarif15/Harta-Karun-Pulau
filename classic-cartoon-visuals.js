@@ -2,6 +2,11 @@
    Hanya fungsi lukisan ditukar. Kandungan, misi, semakan dan aliran permainan kekal. */
 
 (function () {
+   const avatarAkmal = new Image();
+avatarAkmal.src = 'assets/characters/kapten_akmal.png';
+
+const avatarArif = new Image();
+avatarArif.src = 'assets/characters/kapten_arif.png';
   function rr(x,y,w,h,r,fill,stroke,lw){
     const q=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -70,55 +75,78 @@
     ctx.restore();
   };
 
-  drawCaptain = function(x,y,name,isArif,cheer){
-    ctx.save();ctx.translate(x,y);
-    const bob=state.calm?0:Math.sin(state.t*3+x*.01)*2.4;
-    ctx.translate(0,bob);
+  drawCaptain = function(x, y, name, isArif, cheer) {
+  ctx.save();
+  ctx.translate(x, y);
 
-    ctx.fillStyle='#335e6470';ctx.beginPath();ctx.ellipse(0,25,35,9,0,0,Math.PI*2);ctx.fill();
+  const img = isArif ? avatarArif : avatarAkmal;
 
-    ctx.strokeStyle='#303840';ctx.lineWidth=8;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(-10,-2);ctx.lineTo(-13,27);ctx.moveTo(10,-2);ctx.lineTo(13,27);ctx.stroke();
+  const width = isArif ? 150 : 145;
+  let height = 190;
 
-    ctx.fillStyle=isArif?'#df8a36':'#2f7ba6';
-    ctx.strokeStyle='#37424a';ctx.lineWidth=3;
-    ctx.beginPath();ctx.roundRect(-27,-58,54,58,18);ctx.fill();ctx.stroke();
-    ctx.fillStyle=isArif?'#f5d95d':'#ef5c4d';ctx.fillRect(-24,-40,48,9);
+  if (img.complete && img.naturalWidth > 0) {
+    height = width * (img.naturalHeight / img.naturalWidth);
+  }
 
-    ctx.strokeStyle='#333d43';ctx.lineWidth=7;
+  // Bayang di bawah kaki
+  ctx.fillStyle = 'rgba(35, 70, 75, 0.25)';
+  ctx.beginPath();
+  ctx.ellipse(0, 18, 44, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Lukis avatar PNG
+  if (img.complete && img.naturalWidth > 0) {
+    ctx.drawImage(
+      img,
+      -width / 2,
+      -height + 20,
+      width,
+      height
+    );
+  } else {
+    // Paparan sementara sementara gambar dimuatkan
+    ctx.fillStyle = isArif ? '#e8943a' : '#3889b7';
     ctx.beginPath();
-    if(cheer){ctx.moveTo(-22,-45);ctx.lineTo(-42,-78);ctx.moveTo(22,-45);ctx.lineTo(42,-78);}
-    else{ctx.moveTo(-22,-44);ctx.lineTo(-37,-20);ctx.moveTo(22,-44);ctx.lineTo(37,-20);}
+    ctx.arc(0, -75, 35, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Label nama
+  if (name) {
+    const boxWidth = 140;
+    const boxHeight = 30;
+    const boxY = -height - 17;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.strokeStyle = '#344e5f';
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.roundRect(
+      -boxWidth / 2,
+      boxY,
+      boxWidth,
+      boxHeight,
+      13
+    );
+    ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle=isArif?'#d4aa72':'#e2b77d';ctx.strokeStyle='#37424a';ctx.lineWidth=3;
-    ctx.beginPath();ctx.arc(0,-87,31,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle = '#2e4652';
+    ctx.font = 'bold 15px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-    ctx.fillStyle='#ffffff';
-    ctx.beginPath();ctx.ellipse(-10,-88,10,13,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(10,-88,10,13,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#1e2930';
-    ctx.beginPath();ctx.arc(-7,-86,4,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.arc(7,-86,4,0,Math.PI*2);ctx.fill();
+    ctx.fillText(
+      name,
+      0,
+      boxY + boxHeight / 2
+    );
+  }
 
-    ctx.strokeStyle='#714b37';ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.arc(0,-73,10,.15,Math.PI-.15);ctx.stroke();
+  ctx.restore();
+};
 
-    ctx.fillStyle='#2e3c43';ctx.strokeStyle='#202a30';ctx.lineWidth=3;
-    if(isArif){
-      ctx.beginPath();ctx.moveTo(-34,-111);ctx.lineTo(34,-111);ctx.lineTo(43,-101);ctx.lineTo(-43,-101);ctx.closePath();ctx.fill();ctx.stroke();
-      ctx.beginPath();ctx.moveTo(-22,-112);ctx.quadraticCurveTo(0,-138,22,-112);ctx.closePath();ctx.fill();ctx.stroke();
-    }else{
-      ctx.fillStyle='#ef5c4d';ctx.beginPath();ctx.arc(0,-108,29,Math.PI,Math.PI*2);ctx.fill();ctx.stroke();
-      ctx.fillRect(-31,-110,62,9);
-    }
-
-    if(name){
-      rr(-66,-157,132,30,13,'#ffffffeb','#344e5f',3);
-      ctx.fillStyle='#2e4652';ctx.font='bold 15px Arial';ctx.textAlign='center';ctx.fillText(name,0,-136);
-    }
-    ctx.restore();
-  };
 
   drawShip = function(x,y,scale){
     ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
