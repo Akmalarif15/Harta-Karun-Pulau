@@ -22,6 +22,8 @@ const island5 = new Image();
 island5.src = 'assets/islands/island_5.png?v=1';
 
 const islandImages = [island1, island2, island3, island4, island5];
+   const startShore = new Image();
+startShore.src = 'assets/islands/start_shore.png?v=1';
   function rr(x,y,w,h,r,fill,stroke,lw){
     const q=Math.min(r,w/2,h/2);
     ctx.beginPath();
@@ -354,9 +356,22 @@ const islandImages = [island1, island2, island3, island4, island5];
 
   drawTravel = function(progress){
     drawSkySea('#8fb9d1','#579493');
+     if (startShore.complete && startShore.naturalWidth > 0) {
+  const w = 320;
+  const h = w * (startShore.naturalHeight / startShore.naturalWidth);
+
+  ctx.drawImage(
+    startShore,
+    0,
+    430,
+    w,
+    h
+  );
+}
     const pts=[{x:135,y:620},{x:340,y:500},{x:550,y:625},{x:770,y:485},{x:995,y:610},{x:1240,y:490}];
     ctx.strokeStyle='#f8f1c5';ctx.lineWidth=5;ctx.setLineDash([11,14]);ctx.beginPath();pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});ctx.stroke();ctx.setLineDash([]);
    pts.forEach(function(p,i){
+      if(i === 0) return;
   if(i===0){
     ctx.fillStyle='#e8e38a';
     ctx.strokeStyle='#657c64';
