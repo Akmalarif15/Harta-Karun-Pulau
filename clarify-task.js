@@ -43,9 +43,22 @@
   }
 
   const overlay = document.getElementById('overlay');
-  if (!overlay) return;
+  if (overlay) {
+    const observer = new MutationObserver(enhanceMissionText);
+    observer.observe(overlay, { childList: true, subtree: true });
+    enhanceMissionText();
+  }
 
-  const observer = new MutationObserver(enhanceMissionText);
-  observer.observe(overlay, { childList: true, subtree: true });
-  enhanceMissionText();
+  // Ringkaskan teks kemajuan perjalanan pada kanvas kepada peratus sahaja.
+  const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+  CanvasRenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
+    if (typeof text === 'string' && text.startsWith('Perjalanan 2 saat • ')) {
+      text = text.replace('Perjalanan 2 saat • ', '');
+    }
+
+    if (typeof maxWidth === 'number') {
+      return originalFillText.call(this, text, x, y, maxWidth);
+    }
+    return originalFillText.call(this, text, x, y);
+  };
 })();
