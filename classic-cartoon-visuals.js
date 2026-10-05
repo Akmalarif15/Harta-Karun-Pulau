@@ -356,14 +356,65 @@ const islandImages = [island1, island2, island3, island4, island5];
     drawSkySea('#8fb9d1','#579493');
     const pts=[{x:135,y:620},{x:340,y:500},{x:550,y:625},{x:770,y:485},{x:995,y:610},{x:1240,y:490}];
     ctx.strokeStyle='#f8f1c5';ctx.lineWidth=5;ctx.setLineDash([11,14]);ctx.beginPath();pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});ctx.stroke();ctx.setLineDash([]);
-    pts.forEach(function(p,i){ctx.fillStyle=i===0?'#e8e38a':'#a9c989';ctx.strokeStyle='#657c64';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y,76,36,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(i>0){ctx.fillStyle='#2f8f4c';ctx.beginPath();ctx.arc(p.x-18,p.y-31,22,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(p.x+15,p.y-32,18,0,Math.PI*2);ctx.fill();}}
-    const a=pts[Math.max(0,state.travelFrom+1)],b=pts[state.travelTo+1];
-    const e=progress<.5?2*progress*progress:1-Math.pow(-2*progress+2,2)/2;
-    const x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e-32*Math.sin(Math.PI*e);
-    drawShip(x,y,.34);drawCaptain(x-18,y-46,'',false,false);drawCaptain(x+24,y-46,'',true,false);
-    rr(500,700,440,42,18,'#f8fbf6','#334b59',3);ctx.fillStyle='#e7d05d';ctx.fillRect(515,714,410*progress,14);ctx.strokeStyle='#739094';ctx.lineWidth=2;ctx.strokeRect(515,714,410,14);ctx.fillStyle='#314954';ctx.font='bold 18px Arial';ctx.textAlign='center';ctx.fillText(Math.round(progress*100)+'%',720,690);
-  };
+   pts.forEach(function(p,i){
+  if(i===0){
+    ctx.fillStyle='#e8e38a';
+    ctx.strokeStyle='#657c64';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.ellipse(p.x,p.y,76,36,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
 
+    ctx.fillStyle='#314954';
+    ctx.font='bold 18px Arial';
+    ctx.textAlign='center';
+    ctx.fillText('Mula', p.x, p.y+6);
+    return;
+  }
+
+  const img = islandImages[i-1];
+
+  if(img && img.complete && img.naturalWidth > 0){
+    const w = 150;
+    const h = w * (img.naturalHeight / img.naturalWidth);
+
+    ctx.drawImage(
+      img,
+      p.x - w/2,
+      p.y - h/2 + 8,
+      w,
+      h
+    );
+
+    ctx.fillStyle='#314954';
+    ctx.font='bold 20px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(String(i), p.x, p.y+10);
+  } else {
+    ctx.fillStyle='#a9c989';
+    ctx.strokeStyle='#657c64';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.ellipse(p.x,p.y,76,36,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle='#2f8f4c';
+    ctx.beginPath();
+    ctx.arc(p.x-18,p.y-31,22,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.x+15,p.y-32,18,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle='#314954';
+    ctx.font='bold 20px Arial';
+    ctx.textAlign='center';
+    ctx.fillText(String(i), p.x, p.y+10);
+  }
+});
   drawTreasureChest = function(x,y,scale,open){
     ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
     if(open){ctx.fillStyle='#fff3a777';ctx.beginPath();ctx.arc(0,-10,120,0,Math.PI*2);ctx.fill();}
