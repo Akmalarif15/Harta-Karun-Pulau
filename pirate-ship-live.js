@@ -52,7 +52,7 @@
     kapalBersih = null;
   };
 
-  kapal.src = 'assets/pirate_ship.png?v=3';
+  kapal.src = 'assets/pirate_ship.png?v=4';
 
   function ukuranKapal(x, y, scale) {
     if (!kapalSiap || !kapalBersih) return null;
@@ -82,27 +82,25 @@
     }
 
     ctx.save();
-
-    // Bayang kecil di bawah badan kapal supaya nampak berpijak pada air.
     ctx.fillStyle = 'rgba(29, 63, 73, .20)';
     ctx.beginPath();
     ctx.ellipse(x, y + u.h * 0.27, u.w * 0.40, Math.max(4, u.h * 0.045), 0, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.drawImage(kapalBersih, u.drawX, u.drawY, u.w, u.h);
     ctx.restore();
   };
 
-  /* Lukis semula bahagian hadapan badan kapal selepas watak.
-     Ini menutup kaki/bahagian bawah badan dan menghasilkan ilusi watak
-     benar-benar berada di dalam kapal, bukannya terapung di atas kapal. */
-  function lukisBadanKapalDepan(x, y, scale) {
+  /* Lapisan ini dilukis selepas Kapten Arif supaya bahagian bawah badan
+     terlindung di sebalik sisi kapal. */
+  function lukisBadanKapalDepan(x, y, scale, depth) {
     const u = ukuranKapal(x, y, scale);
     if (!u) return;
 
+    const mulaTutup = y - u.h * (depth || 0.03);
+
     ctx.save();
     ctx.beginPath();
-    ctx.rect(u.drawX - 2, y - Math.max(3, u.h * 0.018), u.w + 4, u.h * 0.48);
+    ctx.rect(u.drawX - 3, mulaTutup, u.w + 6, u.h * 0.52);
     ctx.clip();
     ctx.drawImage(kapalBersih, u.drawX, u.drawY, u.w, u.h);
     ctx.restore();
@@ -115,25 +113,31 @@
       let kapalDepan = null;
 
       if (isArif) {
-        // Scene pembukaan: kaki Arif berada sedikit di bawah paras dek.
+        /* Scene pembukaan: turunkan Arif jauh sedikit supaya kaki dan bahagian
+           bawah badannya benar-benar masuk di sebalik badan kapal. */
         if (state.screen === 'title' || state.screen === 'intro') {
-          xBaharu += 10;
-          yBaharu += 52;
-          kapalDepan = { x: 1050, y: 495, scale: 0.92 };
+          xBaharu += 8;
+          yBaharu += 118;
+          kapalDepan = { x: 1050, y: 495, scale: 0.92, depth: 0.03 };
         }
 
-        // Scene perjalanan: Arif berada di bahagian tengah dek kapal kecil.
+        /* Scene perjalanan: kesan sama tetapi lebih ringan kerana kapal kecil. */
         if (state.screen === 'travel') {
           xBaharu -= 8;
-          yBaharu += 22;
-          kapalDepan = { x: x - 24, y: y + 46, scale: 0.34 };
+          yBaharu += 36;
+          kapalDepan = { x: x - 24, y: y + 46, scale: 0.34, depth: 0.04 };
         }
       }
 
       drawCaptainAsal(xBaharu, yBaharu, name, isArif, cheer);
 
       if (kapalDepan) {
-        lukisBadanKapalDepan(kapalDepan.x, kapalDepan.y, kapalDepan.scale);
+        lukisBadanKapalDepan(
+          kapalDepan.x,
+          kapalDepan.y,
+          kapalDepan.scale,
+          kapalDepan.depth
+        );
       }
     };
   }
