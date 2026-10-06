@@ -1,5 +1,5 @@
-/* Gunakan PNG kapal lanun baharu dan laraskan kedudukan Kapten Arif supaya
-   kelihatan berdiri di atas dek, bukan terapung. Kandungan permainan kekal. */
+/* Gunakan PNG kapal lanun baharu dan laraskan Kapten Arif supaya benar-benar
+   kelihatan berada di dalam kapal. Kandungan permainan kekal. */
 (function () {
   if (typeof ctx === 'undefined' || typeof state === 'undefined') return;
 
@@ -52,53 +52,89 @@
     kapalBersih = null;
   };
 
-  kapal.src = 'assets/pirate_ship.png?v=2';
+  kapal.src = 'assets/pirate_ship.png?v=3';
 
-  drawShip = function (x, y, scale) {
-    if (!kapalSiap || !kapalBersih) {
-      if (drawShipAsal) drawShipAsal(x, y, scale);
-      return;
-    }
+  function ukuranKapal(x, y, scale) {
+    if (!kapalSiap || !kapalBersih) return null;
 
     const ratio = kapalBersih.width / kapalBersih.height;
     const w = 410 * scale;
     const h = w / ratio;
-
-    /* Dalam kod asal, nilai y bertindak hampir sebagai paras dek.
-       Kekalkan semantik itu supaya semua scene lama masih sejajar. */
     const deckRatio = 0.61;
-    const drawX = x - w / 2;
-    const drawY = y - h * deckRatio;
+
+    return {
+      x: x,
+      y: y,
+      scale: scale,
+      w: w,
+      h: h,
+      drawX: x - w / 2,
+      drawY: y - h * deckRatio
+    };
+  }
+
+  drawShip = function (x, y, scale) {
+    const u = ukuranKapal(x, y, scale);
+
+    if (!u) {
+      if (drawShipAsal) drawShipAsal(x, y, scale);
+      return;
+    }
 
     ctx.save();
 
     // Bayang kecil di bawah badan kapal supaya nampak berpijak pada air.
     ctx.fillStyle = 'rgba(29, 63, 73, .20)';
     ctx.beginPath();
-    ctx.ellipse(x, y + h * 0.27, w * 0.40, Math.max(4, h * 0.045), 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + u.h * 0.27, u.w * 0.40, Math.max(4, u.h * 0.045), 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.drawImage(kapalBersih, drawX, drawY, w, h);
+    ctx.drawImage(kapalBersih, u.drawX, u.drawY, u.w, u.h);
     ctx.restore();
   };
 
+  /* Lukis semula bahagian hadapan badan kapal selepas watak.
+     Ini menutup kaki/bahagian bawah badan dan menghasilkan ilusi watak
+     benar-benar berada di dalam kapal, bukannya terapung di atas kapal. */
+  function lukisBadanKapalDepan(x, y, scale) {
+    const u = ukuranKapal(x, y, scale);
+    if (!u) return;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(u.drawX - 2, y - Math.max(3, u.h * 0.018), u.w + 4, u.h * 0.48);
+    ctx.clip();
+    ctx.drawImage(kapalBersih, u.drawX, u.drawY, u.w, u.h);
+    ctx.restore();
+  }
+
   if (drawCaptainAsal) {
     drawCaptain = function (x, y, name, isArif, cheer) {
+      let xBaharu = x;
       let yBaharu = y;
+      let kapalDepan = null;
 
       if (isArif) {
-        // Scene pembukaan: turunkan kaki Arif tepat ke paras dek kapal.
+        // Scene pembukaan: kaki Arif berada sedikit di bawah paras dek.
         if (state.screen === 'title' || state.screen === 'intro') {
-          yBaharu += 46;
+          xBaharu += 10;
+          yBaharu += 52;
+          kapalDepan = { x: 1050, y: 495, scale: 0.92 };
         }
 
-        // Scene perjalanan: rapatkan Arif sedikit kepada dek kapal kecil.
+        // Scene perjalanan: Arif berada di bahagian tengah dek kapal kecil.
         if (state.screen === 'travel') {
-          yBaharu += 18;
+          xBaharu -= 8;
+          yBaharu += 22;
+          kapalDepan = { x: x - 24, y: y + 46, scale: 0.34 };
         }
       }
 
-      drawCaptainAsal(x, yBaharu, name, isArif, cheer);
+      drawCaptainAsal(xBaharu, yBaharu, name, isArif, cheer);
+
+      if (kapalDepan) {
+        lukisBadanKapalDepan(kapalDepan.x, kapalDepan.y, kapalDepan.scale);
+      }
     };
   }
 })();
