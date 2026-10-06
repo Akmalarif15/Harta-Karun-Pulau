@@ -1,5 +1,5 @@
 /* Gunakan PNG kapal lanun baharu dan laraskan Kapten Arif supaya benar-benar
-   kelihatan berada di dalam kapal. Kandungan permainan kekal. */
+   kelihatan berada di dalam kapal tanpa muka dilindungi palang layar. */
 (function () {
   if (typeof ctx === 'undefined' || typeof state === 'undefined') return;
 
@@ -52,7 +52,7 @@
     kapalBersih = null;
   };
 
-  kapal.src = 'assets/pirate_ship.png?v=4';
+  kapal.src = 'assets/pirate_ship.png?v=5';
 
   function ukuranKapal(x, y, scale) {
     if (!kapalSiap || !kapalBersih) return null;
@@ -90,19 +90,28 @@
     ctx.restore();
   };
 
-  /* Lapisan ini dilukis selepas Kapten Arif supaya bahagian bawah badan
-     terlindung di sebalik sisi kapal. */
-  function lukisBadanKapalDepan(x, y, scale, depth) {
+  /* Hanya bahagian bawah PNG kapal dilukis semula di hadapan watak.
+     Ini penting supaya badan kayu kapal menutup kaki Arif, tetapi layar,
+     palang layar dan tali tidak dilukis semula di atas muka. */
+  function lukisBadanKapalDepan(x, y, scale, mulaBadan) {
     const u = ukuranKapal(x, y, scale);
     if (!u) return;
 
-    const mulaTutup = y - u.h * (depth || 0.03);
+    const nisbahMula = mulaBadan || 0.60;
+    const sw = kapalBersih.width;
+    const sh = kapalBersih.height;
+    const sy = Math.floor(sh * nisbahMula);
+    const sourceH = sh - sy;
+
+    const destY = u.drawY + u.h * nisbahMula;
+    const destH = u.h * (1 - nisbahMula);
 
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(u.drawX - 3, mulaTutup, u.w + 6, u.h * 0.52);
-    ctx.clip();
-    ctx.drawImage(kapalBersih, u.drawX, u.drawY, u.w, u.h);
+    ctx.drawImage(
+      kapalBersih,
+      0, sy, sw, sourceH,
+      u.drawX, destY, u.w, destH
+    );
     ctx.restore();
   }
 
@@ -113,19 +122,19 @@
       let kapalDepan = null;
 
       if (isArif) {
-        /* Scene pembukaan: turunkan Arif jauh sedikit supaya kaki dan bahagian
-           bawah badannya benar-benar masuk di sebalik badan kapal. */
+        /* Scene pembukaan: Arif diturunkan secukupnya supaya kaki berada
+           di dalam kapal, tetapi muka kekal jauh di atas sisi kapal. */
         if (state.screen === 'title' || state.screen === 'intro') {
           xBaharu += 8;
-          yBaharu += 118;
-          kapalDepan = { x: 1050, y: 495, scale: 0.92, depth: 0.03 };
+          yBaharu += 78;
+          kapalDepan = { x: 1050, y: 495, scale: 0.92, mulaBadan: 0.60 };
         }
 
-        /* Scene perjalanan: kesan sama tetapi lebih ringan kerana kapal kecil. */
+        /* Scene perjalanan: gunakan kesan sama pada kapal kecil. */
         if (state.screen === 'travel') {
           xBaharu -= 8;
-          yBaharu += 36;
-          kapalDepan = { x: x - 24, y: y + 46, scale: 0.34, depth: 0.04 };
+          yBaharu += 26;
+          kapalDepan = { x: x - 24, y: y + 46, scale: 0.34, mulaBadan: 0.60 };
         }
       }
 
@@ -136,7 +145,7 @@
           kapalDepan.x,
           kapalDepan.y,
           kapalDepan.scale,
-          kapalDepan.depth
+          kapalDepan.mulaBadan
         );
       }
     };
