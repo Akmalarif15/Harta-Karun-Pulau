@@ -1,0 +1,110 @@
+/* Tema dialog lanun dinamik. Hanya rupa kotak dialog, nama watak dan butang diubah. */
+:root{
+  --dialog-navy:#0b4d5b;
+  --dialog-navy-dark:#173d4b;
+  --dialog-gold:#f5b83b;
+  --dialog-gold-light:#ffe27a;
+  --dialog-paper:#fff9e8;
+  --dialog-paper-2:#f7e4b8;
+  --dialog-ink:#16344a;
+}
+
+.overlay.overlay-intro{
+  align-items:flex-end;
+  justify-content:center;
+  padding:0 18px 18px;
+  background:transparent;
+  backdrop-filter:none;
+  pointer-events:none;
+}
+
+.intro-dock{
+  pointer-events:auto;
+  width:min(1060px,94%);
+  min-height:112px;
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr) auto;
+  align-items:center;
+  gap:15px;
+  padding:13px 15px;
+  color:var(--dialog-ink);
+  background:linear-gradient(180deg,var(--dialog-paper),var(--dialog-paper-2));
+  border:5px solid var(--dialog-navy-dark);
+  border-radius:22px;
+  box-shadow:0 7px 0 #a66d24,0 12px 28px rgba(0,0,0,.28),inset 0 0 0 4px var(--dialog-gold-light);
+  position:relative;
+  overflow:visible;
+}
+
+.intro-dock::before,.intro-dock::after{
+  content:'⚓';
+  position:absolute;
+  top:-15px;
+  width:38px;height:38px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  color:#fff8d5;
+  background:linear-gradient(#1594a1,#0a6473);
+  border:3px solid var(--dialog-gold);
+  box-shadow:0 3px 0 #80551d;
+  font-size:19px;
+}
+.intro-dock::before{left:-12px}
+.intro-dock::after{right:-12px}
+
+.intro-dock-avatar{
+  width:68px;height:68px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  font-size:31px;
+  background:radial-gradient(circle at 40% 35%,#fff8c9 0 42%,#f3c247 43% 100%);
+  border:4px solid #fff8db;
+  outline:4px solid var(--dialog-gold);
+  box-shadow:0 3px 0 #80551d,0 6px 12px rgba(0,0,0,.18);
+}
+
+.intro-dock-copy{min-width:0}
+.intro-dock-top{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:7px;font-size:12px;font-weight:900;color:#76511f;
+}
+.intro-dock-top .speaker{
+  display:inline-flex;align-items:center;gap:7px;margin:0;
+  padding:7px 17px 7px 13px;border-radius:999px;
+  color:#fffdf2;background:linear-gradient(#0d8794,#086170);
+  border:3px solid var(--dialog-gold);box-shadow:0 3px 0 #80551d;
+  letter-spacing:.06em;font-size:14px;
+}
+.intro-dock-top .speaker::before{content:'☸';color:#ffd866;font-size:18px}
+.intro-dock-text{
+  font-size:clamp(17px,2vw,21px);line-height:1.45;font-weight:900;color:var(--dialog-ink);
+}
+
+#nextDialog{
+  align-self:center;min-width:145px;min-height:56px;padding:10px 20px;
+  border-radius:18px;border:4px solid #8d5b17;color:#1c3a4c;
+  background:linear-gradient(#ffe26e,#f5ae31);
+  box-shadow:0 5px 0 #754711,inset 0 2px 0 rgba(255,255,255,.55);
+  font-size:18px;font-weight:900;
+}
+#nextDialog:hover{filter:brightness(1.05)}
+#nextDialog:active{transform:translateY(2px);box-shadow:0 3px 0 #754711}
+
+.dialog-card{
+  background:linear-gradient(180deg,#fffaf0,#f7e5b8);
+  border:4px solid #b77a28;border-radius:20px;
+  box-shadow:0 5px 0 rgba(111,70,24,.22),inset 0 0 0 3px #fff3c8;
+}
+.dialog-card .speaker{color:#0a6473;font-weight:900}
+.dialog-card .avatar{
+  background:linear-gradient(#168c99,#0a6271);
+  border:4px solid #ffd75c;box-shadow:0 3px 0 #79501f;
+}
+
+@media(max-width:760px){
+  .intro-dock{width:96%;grid-template-columns:58px 1fr;gap:10px;padding:11px}
+  .intro-dock-avatar{width:52px;height:52px;font-size:24px}
+  #nextDialog{grid-column:1/-1;width:100%;min-height:48px}
+  .intro-dock-top{align-items:flex-start;flex-direction:column;gap:5px}
+  .intro-dock-text{font-size:16px}
+}
